@@ -45,7 +45,7 @@ export type CellIdentityLte = {
   mncString: string;
   pci: number;
   tac: number;
-}
+};
 
 export type CellSignalStrengthLte = {
   cqi: number;
@@ -54,12 +54,12 @@ export type CellSignalStrengthLte = {
   rssi: number;
   rssnr: number;
   timingAdvance: number;
-}
+};
 
 export type CellInfoLte = {
   cellIdentity: CellIdentityLte;
   cellSignalStrength: CellSignalStrengthLte;
-}
+};
 
 export type CellIdentityNr = {
   mccString: string;
@@ -117,8 +117,7 @@ export async function startPingAsync(
   params?: PingParams,
   options?: {[name: string]: string},
 ): Promise<void> {
-  await BSTNetworkLoggingModule.startPingAsync(
-    domainName, params, options);
+  await BSTNetworkLoggingModule.startPingAsync(domainName, params, options);
 }
 
 export async function stopPingAsync(): Promise<void> {
@@ -137,7 +136,10 @@ export async function getPhoneInfoAsync(): Promise<PhoneInfo> {
   return await BSTNetworkLoggingModule.getPhoneInfo();
 }
 
-export async function requestPermissions(options:RequestPermissionOptions): Promise<void> {
+export async function requestPermissions(options: RequestPermissionOptions): Promise<void> {
   await BSTNetworkLoggingModule.requestPermissions(options);
 }
 
+export async function initializeAsync(): Promise<void> {
+  await BSTNetworkLoggingModule.initializeAsync();
+}

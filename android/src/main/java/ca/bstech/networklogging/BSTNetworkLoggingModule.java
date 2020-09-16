@@ -17,8 +17,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
+
+import androidx.core.app.ActivityCompat;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,18 +39,27 @@ public class BSTNetworkLoggingModule extends ReactContextBaseJavaModule implemen
     public BSTNetworkLoggingModule(ReactApplicationContext reactContext) {
         super(reactContext);
         reactContext.addLifecycleEventListener(this);
-        networkLoggingHelper = new NetworkLoggingHelper(reactContext);
-
-        telephonyHelper = new TelephonyHelper(reactContext);
-        telephonyHelper.addObserver(networkLoggingHelper.getNetInfoObserver());
-        telephonyHelper.startListener();
-
         pingHelper = new PingHelper(reactContext);
-
         Observer pingEventEmitter = new EventEmitter(reactContext, Constants.PING_EVENT);
         pingHelper.getObservable().addObserver(pingEventEmitter);
-        pingHelper.getObservable().addObserver(networkLoggingHelper.getPingObserver());
+    }
 
+    @ReactMethod
+    public void initializeAsync(final Promise promise) {
+        try {
+            ReactApplicationContext reactContext = getReactApplicationContext();
+            networkLoggingHelper = new NetworkLoggingHelper(reactContext);
+
+            telephonyHelper = new TelephonyHelper(reactContext);
+            telephonyHelper.addObserver(networkLoggingHelper.getNetInfoObserver());
+            telephonyHelper.startListener();
+
+            pingHelper.getObservable().addObserver(networkLoggingHelper.getPingObserver());
+            promise.resolve(null);
+        } catch(Exception e) {
+            Log.e(Constants.MODULE_NAME, "initialize networkLogging module failed", e);
+            promise.reject(Constants.E_RUNTIME_EXCEPTION, e);
+        }
     }
 
     @Override

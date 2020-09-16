@@ -92,3 +92,4 @@ export declare function startNetworkLoggingAsync(): Promise<void>;
 export declare function stopNetworkLoggingAsync(): Promise<void>;
 export declare function getPhoneInfoAsync(): Promise<PhoneInfo>;
 export declare function requestPermissions(options: RequestPermissionOptions): Promise<void>;
+export declare function initializeAsync(): Promise<void>;
