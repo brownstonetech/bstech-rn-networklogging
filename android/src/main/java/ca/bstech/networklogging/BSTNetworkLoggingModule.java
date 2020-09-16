@@ -160,7 +160,7 @@ public class BSTNetworkLoggingModule extends ReactContextBaseJavaModule implemen
             }
 
             if (requestPermission && !hasPermissionToReadPhoneStats()) {
-                requestPhoneStateStats();
+                requestPhoneStatePermissions();
                 promise.resolve(hasPermissionToReadPhoneStats());
                 return;
             }
@@ -175,7 +175,7 @@ public class BSTNetworkLoggingModule extends ReactContextBaseJavaModule implemen
     private boolean hasPermissionToReadNetworkHistory(boolean requestPermission) {
         final Activity activity = getCurrentActivity();
         if (activity == null) {
-            Log.w(Constants.MODULE_NAME, "Could not read network history permission: current activity is null.");
+            Log.w(Constants.MODULE_NAME, "Could not read network usage permission: current activity is null.");
             return false;
         }
         final AppOpsManager appOps = (AppOpsManager) activity.getSystemService(Context.APP_OPS_SERVICE);
@@ -215,11 +215,22 @@ public class BSTNetworkLoggingModule extends ReactContextBaseJavaModule implemen
     }
 
     private boolean hasPermissionToReadPhoneStats() {
-        if (ActivityCompat.checkSelfPermission(getCurrentActivity(), android.Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_DENIED
-                || ActivityCompat.checkSelfPermission(getCurrentActivity(), android.Manifest.permission.READ_PHONE_NUMBERS) == PackageManager.PERMISSION_DENIED
-                || ActivityCompat.checkSelfPermission(getCurrentActivity(), android.Manifest.permission.READ_SMS) == PackageManager.PERMISSION_DENIED
-                || ActivityCompat.checkSelfPermission(getCurrentActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED
-                || ActivityCompat.checkSelfPermission(getCurrentActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_DENIED
+        boolean isPermitReadPhoneState = ActivityCompat.checkSelfPermission(getCurrentActivity(), android.Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED;
+        boolean isPermitReadPhoneNumbers = ActivityCompat.checkSelfPermission(getCurrentActivity(), android.Manifest.permission.READ_PHONE_NUMBERS) == PackageManager.PERMISSION_GRANTED;
+        boolean isPermitReadSMS = ActivityCompat.checkSelfPermission(getCurrentActivity(), android.Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED;
+        boolean isPermitAccessFineLocation = ActivityCompat.checkSelfPermission(getCurrentActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        boolean isPermitAccessCoarseLocation = ActivityCompat.checkSelfPermission(getCurrentActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        Log.d(Constants.MODULE_NAME, "Current permission status: READ_PHONE_STATE="+isPermitReadPhoneState
+                +", READ_PHONE_NUMBERS="+isPermitReadPhoneNumbers
+                +", READ_SMS="+isPermitReadSMS
+                +", ACCESS_FINE_LOCATION="+isPermitAccessFineLocation
+                +", ACCESS_COARSE_LOCATION="+isPermitAccessCoarseLocation
+        );
+        if ( !isPermitReadPhoneState
+                || !isPermitReadPhoneNumbers
+                || !isPermitReadSMS
+                || !isPermitAccessFineLocation
+                || !isPermitAccessCoarseLocation
         ) {
             return false;
         } else {
@@ -227,7 +238,7 @@ public class BSTNetworkLoggingModule extends ReactContextBaseJavaModule implemen
         }
     }
 
-    private void requestPhoneStateStats() {
+    private void requestPhoneStatePermissions() {
         ActivityCompat.requestPermissions(getCurrentActivity(), new String[]{
                 android.Manifest.permission.READ_PHONE_STATE,
                 android.Manifest.permission.READ_PHONE_NUMBERS,
