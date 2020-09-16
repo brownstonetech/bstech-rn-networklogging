@@ -43,10 +43,10 @@ public class BSTNetworkLoggingModule extends ReactContextBaseJavaModule implemen
         try {
             ReactApplicationContext reactContext = getReactApplicationContext();
             telephonyHelper = new TelephonyHelper(reactContext);
+            networkLoggingHelper = new NetworkLoggingHelper(reactContext, telephonyHelper);
+
             telephonyHelper.addObserver(networkLoggingHelper.getNetInfoObserver());
             telephonyHelper.addObserver(new NetInfoEventEmitter(reactContext, Constants.NETWORK_INFO_EVENT));
-
-            networkLoggingHelper = new NetworkLoggingHelper(reactContext, telephonyHelper);
 
             telephonyHelper.startListener();
 
