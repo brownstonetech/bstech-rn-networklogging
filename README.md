@@ -1,17 +1,17 @@
-# bstech-rn-ping
+# bstech-rn-networklogging
 
 ## Getting started
 
-`$ npm install bstech-rn-ping --save`
+`$ npm install bstech-rn-networklogging --save`
 
 ### Mostly automatic installation
 
-`$ react-native link bstech-rn-ping`
+`$ react-native link bstech-rn-networklogging`
 
 ## Usage
 ```javascript
-import BSTPing from 'bstech-rn-ping';
+import BSTNetworkLogging from 'bstech-rn-networklogging';
 
 // TODO: What to do with the module?
-BSTPing;
+BSTNetworkLogging;
 ```

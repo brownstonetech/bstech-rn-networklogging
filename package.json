@@ -1,8 +1,8 @@
 {
-  "name": "bstech-rn-ping",
-  "title": "React Native Ping",
-  "version": "1.0.0",
-  "description": "Run ping in background, support Android only",
+  "name": "bstech-rn-networklogging",
+  "title": "React Native Network Logging",
+  "version": "0.0.1",
+  "description": "Get Network Usage statistic data, support Android only",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -18,11 +18,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/brownstonetech/bstech-rn-ping.git",
-    "baseUrl": "https://github.com/brownstonetech/bstech-rn-ping"
+    "url": "git+https://github.com/brownstonetech/bstech-rn-datausage.git",
+    "baseUrl": "https://github.com/brownstonetech/bstech-rn-datausage"
   },
   "keywords": [
-    "react-native","ping"
+    "react-native","dataUsage"
   ],
   "author": {
     "name": "Miles Huang",

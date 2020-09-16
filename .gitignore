@@ -36,6 +36,13 @@ build/
 local.properties
 *.iml
 
+# Eclipse
+.project
+.classpath
+.settings
+
+/android/gradle/wrapper
+
 # BUCK
 buck-out/
 \.buckd/

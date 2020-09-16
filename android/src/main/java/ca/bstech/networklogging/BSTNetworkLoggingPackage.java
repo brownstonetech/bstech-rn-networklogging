@@ -1,4 +1,4 @@
-package ca.bstech.ping;
+package ca.bstech.networklogging;
 
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.JavaScriptModule;
@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class BSTPingPackage implements ReactPackage {
+public class BSTNetworkLoggingPackage implements ReactPackage {
 
     @Override
     public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
@@ -18,7 +18,6 @@ public class BSTPingPackage implements ReactPackage {
     }
 
     // Deprecated from RN 0.47
-    @Override
     public List<Class<? extends JavaScriptModule>> createJSModules() {
         return Collections.emptyList();
     }
@@ -26,7 +25,7 @@ public class BSTPingPackage implements ReactPackage {
     @Override
     public List<NativeModule> createNativeModules(
             ReactApplicationContext reactContext) {
-        return Arrays.<NativeModule>asList(new BSTPingModule(reactContext));
+        return Arrays.<NativeModule>asList(new BSTNetworkLoggingModule(reactContext));
     }
 
 }
