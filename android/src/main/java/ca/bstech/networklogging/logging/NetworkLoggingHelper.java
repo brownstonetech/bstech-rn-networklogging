@@ -83,6 +83,10 @@ public class NetworkLoggingHelper {
                         try {
                             LoggingItem loggingItem;
                             synchronized (me) {
+                                if ( logFileWriter == null ) {
+                                    Log.d(Constants.MODULE_NAME, "Detected loggingTask run after stop at point 1");
+                                    return;
+                                }
                                 // switching currentLoggingItem;
                                 loggingItem = currentLoggingItem;
                                 currentLoggingItem = new LoggingItem(loggingItem);
@@ -115,7 +119,13 @@ public class NetworkLoggingHelper {
                                 loggingItem.setDownlinkBps(0);
                                 loggingItem.setUplinkBps(0);
                             }
-                            logFileWriter.appendLoggingItem(loggingItem);
+                            synchronized(me) {
+                                if ( logFileWriter == null ) {
+                                    Log.d(Constants.MODULE_NAME, "Detected loggingTask run after stop at point 2");
+                                    return;
+                                }
+                                logFileWriter.appendLoggingItem(loggingItem);
+                            }
                         } catch (Exception e) {
                             // catch all exception during task execution
                             if (e instanceof IOException) {
@@ -125,11 +135,13 @@ public class NetworkLoggingHelper {
                                 Log.e(Constants.MODULE_NAME, "Unexpected exception when running network logging task", e);
                                 promise.reject(Constants.E_RUNTIME_EXCEPTION, e);
                             }
-                            savedPromise = null;
-                            try {
-                                cleanupLoggingTask();
-                            } catch (Exception e1) {
-                                Log.e(Constants.MODULE_NAME, "Unexpected exception when stopNetworkLogging", e);
+                            synchronized(me) {
+                                savedPromise = null;
+                                try {
+                                    cleanupLoggingTask();
+                                } catch (Exception e1) {
+                                    Log.e(Constants.MODULE_NAME, "Unexpected exception when stopNetworkLogging", e);
+                                }
                             }
                         }
                     }
@@ -151,7 +163,7 @@ public class NetworkLoggingHelper {
         }
     }
 
-    private void cleanupLoggingTask() throws ApplicationException {
+    private synchronized void cleanupLoggingTask() throws ApplicationException {
         loggingTask.cancel();
         loggingTask = null;
         loggingIntervalTimer.purge();
