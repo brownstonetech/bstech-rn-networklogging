@@ -122,16 +122,27 @@ public class BSTNetworkLoggingModule extends ReactContextBaseJavaModule implemen
 
     @ReactMethod
     public void startNetworkLoggingAsync(final Promise promise) {
+        if ( networkLoggingHelper == null ) {
+            promise.reject(Constants.E_INVALID_PARAM, "networkLogging module haven't been initialized yet.");
+            return;
+        }
         networkLoggingHelper.startNetworkLoggingAsync(1000, promise);
     }
 
     @ReactMethod
     public void stopNetworkLoggingAsync(final Promise promise) {
         try {
-            networkLoggingHelper.stopNetworkLogging();
-            promise.resolve(null);
+            if ( networkLoggingHelper != null ) {
+                networkLoggingHelper.stopNetworkLogging();
+            }
+            if (promise != null) {
+                promise.resolve(null);
+            }
         } catch(Exception e) {
-            promise.reject(Constants.E_RUNTIME_EXCEPTION, e);
+            Log.e(Constants.MODULE_NAME, "Stop networkLogging task encounter unexpected Exception", e);
+            if ( promise != null) {
+                promise.reject(Constants.E_RUNTIME_EXCEPTION, e);
+            }
         }
     }
 
