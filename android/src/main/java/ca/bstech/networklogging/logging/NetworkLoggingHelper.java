@@ -81,7 +81,6 @@ public class NetworkLoggingHelper {
                     @Override
                     public void run() {
                         try {
-                            long now = System.currentTimeMillis();
                             LoggingItem loggingItem;
                             synchronized (me) {
                                 // switching currentLoggingItem;
@@ -96,14 +95,25 @@ public class NetworkLoggingHelper {
                             // loggingItem.setAccessNetworkType(??);
 
                             // Capture historical net usage stats
-                            NetworkStats.Bucket bucket = networkStatsHelper.getPackageNetworkStatsMobile(loggingItem.getStartTs(), currentLoggingItem.getStartTs()-1);
+                            long period = loggingItem.getPeriod();
+                            NetworkStats.Bucket bucket = networkStatsHelper.getPackageNetworkStatsMobile(loggingItem.getStartTs(), loggingItem.getStartTs()+period);
                             loggingItem.setDataUsage(bucket);
                             if (bucket != null) {
-                                long period = loggingItem.getPeriod();
                                 long rxBytes = bucket.getRxBytes();
-                                loggingItem.setDownlinkBps(((double) rxBytes * 8) / (1024 * 1024) / (period / 1000));
                                 long txBytes = bucket.getTxBytes();
-                                loggingItem.setUplinkBps(((double) txBytes * 8) / (1024 * 1024) / (period / 1000));
+                                Log.d(Constants.MODULE_NAME, "Get networkStatus.bucket"
+                                        +": startTimeStamp="+bucket.getStartTimeStamp()
+                                        +", endTimeStamp="+bucket.getEndTimeStamp()
+                                        +", rxBytes="+rxBytes
+                                        +", txBytes="+txBytes
+                                        +", period="+period
+                                );
+                                loggingItem.setDownlinkBps(((double) rxBytes * 8) /((double)period / 1000)/(1024 * 1024));
+                                loggingItem.setUplinkBps(((double) txBytes * 8) / ((double)period / 1000)/(1024 * 1024));
+                            } else {
+                                Log.w(Constants.MODULE_NAME, "Get networkStatus.bucket return null");
+                                loggingItem.setDownlinkBps(0);
+                                loggingItem.setUplinkBps(0);
                             }
                             logFileWriter.appendLoggingItem(loggingItem);
                         } catch (Exception e) {
