@@ -136,24 +136,27 @@ public class BSTNetworkLoggingModule extends ReactContextBaseJavaModule implemen
     }
 
     @ReactMethod
-    public void requestPermissions(final ReadableMap map, final Promise promise) {
+    public void requestPermissionsAsync(final ReadableMap map, final Promise promise) {
         Log.i(Constants.MODULE_NAME, "##### Executando requestPermissions(" + (map != null && map.hasKey("requestPermission") ? map.getString("requestPermission") : "null") + ")");
 
         boolean requestPermission = map.hasKey("requestPermission") ? Boolean.parseBoolean(map.getString("requestPermission")) : true;
         try {
             if (!hasPermissionToReadNetworkHistory(requestPermission)) {
-                promise.resolve(new JSONObject().put("permissions", hasPermissionToReadNetworkHistory(false)).toString());
-                return;
+                boolean hasPermission = hasPermissionToReadNetworkHistory(false);
+                if (!hasPermission) {
+                    promise.resolve(false);
+                    return;
+                }
             }
 
             if (requestPermission && !hasPermissionToReadPhoneStats()) {
                 requestPhoneStateStats();
-                promise.resolve(new JSONObject().put("permissions", hasPermissionToReadPhoneStats()).toString());
+                promise.resolve(hasPermissionToReadPhoneStats());
                 return;
             }
 
-            promise.resolve(new JSONObject().put("permissions", true).toString());
-        } catch (JSONException e) {
+            promise.resolve(true);
+        } catch (Exception e) {
             Log.e(Constants.MODULE_NAME, "Error requesting permissions: " + e.getMessage(), e);
             promise.reject(Constants.E_RUNTIME_EXCEPTION, e);
         }
@@ -206,6 +209,7 @@ public class BSTNetworkLoggingModule extends ReactContextBaseJavaModule implemen
                 || ActivityCompat.checkSelfPermission(getCurrentActivity(), android.Manifest.permission.READ_PHONE_NUMBERS) == PackageManager.PERMISSION_DENIED
                 || ActivityCompat.checkSelfPermission(getCurrentActivity(), android.Manifest.permission.READ_SMS) == PackageManager.PERMISSION_DENIED
                 || ActivityCompat.checkSelfPermission(getCurrentActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED
+                || ActivityCompat.checkSelfPermission(getCurrentActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_DENIED
         ) {
             return false;
         } else {
@@ -218,7 +222,8 @@ public class BSTNetworkLoggingModule extends ReactContextBaseJavaModule implemen
                 android.Manifest.permission.READ_PHONE_STATE,
                 android.Manifest.permission.READ_PHONE_NUMBERS,
                 android.Manifest.permission.READ_SMS,
-                android.Manifest.permission.ACCESS_FINE_LOCATION
+                android.Manifest.permission.ACCESS_FINE_LOCATION,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION
         }, READ_PHONE_STATE_REQUEST);
     }
 

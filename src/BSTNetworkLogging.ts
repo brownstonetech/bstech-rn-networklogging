@@ -136,8 +136,8 @@ export async function getPhoneInfoAsync(): Promise<PhoneInfo> {
   return await BSTNetworkLoggingModule.getPhoneInfo();
 }
 
-export async function requestPermissions(options: RequestPermissionOptions): Promise<void> {
-  await BSTNetworkLoggingModule.requestPermissions(options);
+export async function requestPermissionsAsync(options: RequestPermissionOptions): Promise<boolean> {
+  return await BSTNetworkLoggingModule.requestPermissionsAsync(options);
 }
 
 export async function initializeAsync(): Promise<void> {

@@ -1,7 +1,7 @@
 {
   "name": "bstech-rn-networklogging",
   "title": "React Native Network Logging",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Get Network Usage statistic data, support Android only",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

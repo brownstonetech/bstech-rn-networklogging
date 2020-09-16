@@ -67,7 +67,7 @@ public class TelephonyHelper extends Observable
         telephonyPhoneStateListener = new TelephonyListener(this);
     }
 
-    public void startListener() {
+    public void startListener() throws SecurityException {
         int events = PhoneStateListener.LISTEN_CELL_INFO;
         telephonyManager.listen(telephonyPhoneStateListener, events);
         getCellInfo();
