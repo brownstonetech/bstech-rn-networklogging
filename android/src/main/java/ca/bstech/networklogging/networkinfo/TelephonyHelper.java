@@ -61,13 +61,14 @@ public class TelephonyHelper extends Observable
 
     public TelephonyHelper(ReactApplicationContext reactContext) {
         mReactContext = reactContext;
-
         telephonyManager = (TelephonyManager) mReactContext.getSystemService(
                 Context.TELEPHONY_SERVICE);
-        telephonyPhoneStateListener = new TelephonyListener(this);
     }
 
     public void startListener() throws SecurityException {
+        if (telephonyPhoneStateListener == null ) {
+           telephonyPhoneStateListener = new TelephonyListener(this);
+        }
         int events = PhoneStateListener.LISTEN_CELL_INFO;
         telephonyManager.listen(telephonyPhoneStateListener, events);
         getCellInfo();
@@ -80,6 +81,7 @@ public class TelephonyHelper extends Observable
     }
 
     public void stopListener() {
+        if ( telephonyPhoneStateListener == null ) return;
         telephonyManager.listen(telephonyPhoneStateListener,
                 PhoneStateListener.LISTEN_NONE);
     }

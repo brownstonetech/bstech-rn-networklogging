@@ -22,6 +22,7 @@ import java.util.TimerTask;
 import ca.bstech.networklogging.ApplicationException;
 import ca.bstech.networklogging.Constants;
 import ca.bstech.networklogging.networkinfo.CellInfos;
+import ca.bstech.networklogging.networkinfo.TelephonyHelper;
 import ca.bstech.networklogging.usage.NetworkStatsHelper;
 
 import static ca.bstech.networklogging.Constants.ICMP_PACKET;
@@ -29,6 +30,7 @@ import static ca.bstech.networklogging.Constants.ICMP_PACKET;
 public class NetworkLoggingHelper {
 
     private ReactApplicationContext reactContext;
+    private TelephonyHelper telephonyHelper;
 
     private Observer pingObserver;
     private Observer netInfoObserver;
@@ -44,8 +46,9 @@ public class NetworkLoggingHelper {
     private TimerTask loggingTask;
     private Promise savedPromise;
 
-    public NetworkLoggingHelper(ReactApplicationContext reactContext) {
+    public NetworkLoggingHelper(ReactApplicationContext reactContext, TelephonyHelper telephonyHelper) {
         this.reactContext = reactContext;
+        this.telephonyHelper = telephonyHelper;
         pingObserver = new LoggingPingObserver();
         netInfoObserver = new NetworkInfo();
         networkStatsHelper = new NetworkStatsHelper(reactContext);
@@ -86,7 +89,13 @@ public class NetworkLoggingHelper {
                                 currentLoggingItem = new LoggingItem(loggingItem);
                                 loggingItem.setPeriod(currentLoggingItem.getStartTs() - loggingItem.getStartTs());
                             }
-                            // wrap up
+
+                            // Capture realtime network info
+                            loggingItem.setNetworkType(telephonyHelper.getDataNetworkType());
+                            // TODO: accessNetworkType
+                            // loggingItem.setAccessNetworkType(??);
+
+                            // Capture historical net usage stats
                             NetworkStats.Bucket bucket = networkStatsHelper.getPackageNetworkStatsMobile(loggingItem.getStartTs(), currentLoggingItem.getStartTs()-1);
                             loggingItem.setDataUsage(bucket);
                             if (bucket != null) {

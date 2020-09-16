@@ -42,17 +42,18 @@ public class BSTNetworkLoggingModule extends ReactContextBaseJavaModule implemen
     public void initializeAsync(final Promise promise) {
         try {
             ReactApplicationContext reactContext = getReactApplicationContext();
-            networkLoggingHelper = new NetworkLoggingHelper(reactContext);
-
             telephonyHelper = new TelephonyHelper(reactContext);
             telephonyHelper.addObserver(networkLoggingHelper.getNetInfoObserver());
-            telephonyHelper.addObserver(new PingEventEmitter(reactContext, Constants.NETWORK_INFO_EVENT));
+            telephonyHelper.addObserver(new NetInfoEventEmitter(reactContext, Constants.NETWORK_INFO_EVENT));
+
+            networkLoggingHelper = new NetworkLoggingHelper(reactContext, telephonyHelper);
+
             telephonyHelper.startListener();
 
             pingHelper.getObservable().addObserver(networkLoggingHelper.getPingObserver());
             promise.resolve(null);
         } catch(Exception e) {
-            Log.e(Constants.MODULE_NAME, "initialize networkLogging module failed", e);
+            Log.w(Constants.MODULE_NAME, "Initialize network logging module failed", e);
             promise.reject(Constants.E_RUNTIME_EXCEPTION, e);
         }
     }
@@ -79,10 +80,10 @@ public class BSTNetworkLoggingModule extends ReactContextBaseJavaModule implemen
             pingHelper.startPingAsync(domainName, params, pingOptions);
             promise.resolve(null);
         } catch(ApplicationException e) {
-            Log.e(Constants.MODULE_NAME, "Start ping encounter exception", e);
+            Log.w(Constants.MODULE_NAME, "Start ping encounter exception", e);
             promise.reject(e.getCode(), e.getMessage(), e);
         } catch(Exception e) {
-            Log.e(Constants.MODULE_NAME, "Start ping encounter exception", e);
+            Log.w(Constants.MODULE_NAME, "Start ping encounter exception", e);
             promise.reject(Constants.E_RUNTIME_EXCEPTION, e.getMessage(), e);
         }
     }
@@ -92,7 +93,7 @@ public class BSTNetworkLoggingModule extends ReactContextBaseJavaModule implemen
         try {
             pingHelper.stopPingAsync(promise);
         } catch(Exception e) {
-            Log.e(Constants.MODULE_NAME, "Start ping encounter exception", e);
+            Log.w(Constants.MODULE_NAME, "Start ping encounter exception", e);
             promise.reject(Constants.E_RUNTIME_EXCEPTION, e.getMessage(), e);
         }
     }
@@ -106,11 +107,16 @@ public class BSTNetworkLoggingModule extends ReactContextBaseJavaModule implemen
     @ReactMethod
     public void getPhoneInfoAsync(final Promise promise) {
         try {
+            if ( telephonyHelper == null ) {
+                throw new ApplicationException(Constants.E_INVALID_PARAM, "Network logging module haven't been initialized yet.");
+            }
             WritableMap phoneInfo = telephonyHelper.getPhoneInfo();
             promise.resolve(phoneInfo);
         } catch (ApplicationException e) {
+            Log.w(Constants.MODULE_NAME, "Call getPhoneInfo encounter exception", e);
             promise.reject(e.getCode(), e.getMessage(), e);
         } catch (Exception e) {
+            Log.w(Constants.MODULE_NAME, "Call getPhoneInfo encounter unexpected exception", e);
             promise.reject(Constants.E_RUNTIME_EXCEPTION, e);
         }
     }
@@ -134,7 +140,7 @@ public class BSTNetworkLoggingModule extends ReactContextBaseJavaModule implemen
                 promise.resolve(null);
             }
         } catch(Exception e) {
-            Log.e(Constants.MODULE_NAME, "Stop networkLogging task encounter unexpected Exception", e);
+            Log.w(Constants.MODULE_NAME, "Stop networkLogging task encounter unexpected Exception", e);
             if ( promise != null) {
                 promise.reject(Constants.E_RUNTIME_EXCEPTION, e);
             }
@@ -154,15 +160,9 @@ public class BSTNetworkLoggingModule extends ReactContextBaseJavaModule implemen
                 }
             }
 
-//            if (requestPermission && !hasPermissionToReadPhoneStats()) {
-//                requestPhoneStatePermissions();
-//                promise.resolve(hasPermissionToReadPhoneStats());
-//                return;
-//            }
-
             promise.resolve(true);
         } catch (Exception e) {
-            Log.e(Constants.MODULE_NAME, "Error requesting permissions: " + e.getMessage(), e);
+            Log.w(Constants.MODULE_NAME, "Error requesting permissions: " + e.getMessage(), e);
             promise.reject(Constants.E_RUNTIME_EXCEPTION, e);
         }
     }
@@ -208,39 +208,5 @@ public class BSTNetworkLoggingModule extends ReactContextBaseJavaModule implemen
         Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
         getCurrentActivity().startActivity(intent);
     }
-
-//    private boolean hasPermissionToReadPhoneStats() {
-//        boolean isPermitReadPhoneState = ActivityCompat.checkSelfPermission(getCurrentActivity(), android.Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED;
-//        boolean isPermitReadPhoneNumbers = ActivityCompat.checkSelfPermission(getCurrentActivity(), android.Manifest.permission.READ_PHONE_NUMBERS) == PackageManager.PERMISSION_GRANTED;
-//        boolean isPermitReadSMS = ActivityCompat.checkSelfPermission(getCurrentActivity(), android.Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED;
-//        boolean isPermitAccessFineLocation = ActivityCompat.checkSelfPermission(getCurrentActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-//        boolean isPermitAccessCoarseLocation = ActivityCompat.checkSelfPermission(getCurrentActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-//        Log.d(Constants.MODULE_NAME, "Current permission status: READ_PHONE_STATE="+isPermitReadPhoneState
-//                +", READ_PHONE_NUMBERS="+isPermitReadPhoneNumbers
-//                +", READ_SMS="+isPermitReadSMS
-//                +", ACCESS_FINE_LOCATION="+isPermitAccessFineLocation
-//                +", ACCESS_COARSE_LOCATION="+isPermitAccessCoarseLocation
-//        );
-//        if ( !isPermitReadPhoneState
-//                || !isPermitReadPhoneNumbers
-//                || !isPermitReadSMS
-//                || !isPermitAccessFineLocation
-//                || !isPermitAccessCoarseLocation
-//        ) {
-//            return false;
-//        } else {
-//            return true;
-//        }
-//    }
-
-//    private void requestPhoneStatePermissions() {
-//        ActivityCompat.requestPermissions(getCurrentActivity(), new String[]{
-//                android.Manifest.permission.READ_PHONE_STATE,
-//                android.Manifest.permission.READ_PHONE_NUMBERS,
-//                android.Manifest.permission.READ_SMS,
-//                android.Manifest.permission.ACCESS_FINE_LOCATION,
-//                android.Manifest.permission.ACCESS_COARSE_LOCATION
-//        }, READ_PHONE_STATE_REQUEST);
-//    }
 
 }
