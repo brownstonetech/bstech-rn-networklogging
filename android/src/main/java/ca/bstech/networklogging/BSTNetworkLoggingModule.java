@@ -15,14 +15,8 @@ import android.app.Activity;
 import android.app.AppOpsManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.provider.Settings;
 import android.util.Log;
-
-import androidx.core.app.ActivityCompat;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import ca.bstech.networklogging.logging.NetworkLoggingHelper;
 import ca.bstech.networklogging.networkinfo.TelephonyHelper;
@@ -159,11 +153,11 @@ public class BSTNetworkLoggingModule extends ReactContextBaseJavaModule implemen
                 }
             }
 
-            if (requestPermission && !hasPermissionToReadPhoneStats()) {
-                requestPhoneStatePermissions();
-                promise.resolve(hasPermissionToReadPhoneStats());
-                return;
-            }
+//            if (requestPermission && !hasPermissionToReadPhoneStats()) {
+//                requestPhoneStatePermissions();
+//                promise.resolve(hasPermissionToReadPhoneStats());
+//                return;
+//            }
 
             promise.resolve(true);
         } catch (Exception e) {
@@ -214,38 +208,38 @@ public class BSTNetworkLoggingModule extends ReactContextBaseJavaModule implemen
         getCurrentActivity().startActivity(intent);
     }
 
-    private boolean hasPermissionToReadPhoneStats() {
-        boolean isPermitReadPhoneState = ActivityCompat.checkSelfPermission(getCurrentActivity(), android.Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED;
-        boolean isPermitReadPhoneNumbers = ActivityCompat.checkSelfPermission(getCurrentActivity(), android.Manifest.permission.READ_PHONE_NUMBERS) == PackageManager.PERMISSION_GRANTED;
-        boolean isPermitReadSMS = ActivityCompat.checkSelfPermission(getCurrentActivity(), android.Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED;
-        boolean isPermitAccessFineLocation = ActivityCompat.checkSelfPermission(getCurrentActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-        boolean isPermitAccessCoarseLocation = ActivityCompat.checkSelfPermission(getCurrentActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-        Log.d(Constants.MODULE_NAME, "Current permission status: READ_PHONE_STATE="+isPermitReadPhoneState
-                +", READ_PHONE_NUMBERS="+isPermitReadPhoneNumbers
-                +", READ_SMS="+isPermitReadSMS
-                +", ACCESS_FINE_LOCATION="+isPermitAccessFineLocation
-                +", ACCESS_COARSE_LOCATION="+isPermitAccessCoarseLocation
-        );
-        if ( !isPermitReadPhoneState
-                || !isPermitReadPhoneNumbers
-                || !isPermitReadSMS
-                || !isPermitAccessFineLocation
-                || !isPermitAccessCoarseLocation
-        ) {
-            return false;
-        } else {
-            return true;
-        }
-    }
+//    private boolean hasPermissionToReadPhoneStats() {
+//        boolean isPermitReadPhoneState = ActivityCompat.checkSelfPermission(getCurrentActivity(), android.Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED;
+//        boolean isPermitReadPhoneNumbers = ActivityCompat.checkSelfPermission(getCurrentActivity(), android.Manifest.permission.READ_PHONE_NUMBERS) == PackageManager.PERMISSION_GRANTED;
+//        boolean isPermitReadSMS = ActivityCompat.checkSelfPermission(getCurrentActivity(), android.Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED;
+//        boolean isPermitAccessFineLocation = ActivityCompat.checkSelfPermission(getCurrentActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+//        boolean isPermitAccessCoarseLocation = ActivityCompat.checkSelfPermission(getCurrentActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+//        Log.d(Constants.MODULE_NAME, "Current permission status: READ_PHONE_STATE="+isPermitReadPhoneState
+//                +", READ_PHONE_NUMBERS="+isPermitReadPhoneNumbers
+//                +", READ_SMS="+isPermitReadSMS
+//                +", ACCESS_FINE_LOCATION="+isPermitAccessFineLocation
+//                +", ACCESS_COARSE_LOCATION="+isPermitAccessCoarseLocation
+//        );
+//        if ( !isPermitReadPhoneState
+//                || !isPermitReadPhoneNumbers
+//                || !isPermitReadSMS
+//                || !isPermitAccessFineLocation
+//                || !isPermitAccessCoarseLocation
+//        ) {
+//            return false;
+//        } else {
+//            return true;
+//        }
+//    }
 
-    private void requestPhoneStatePermissions() {
-        ActivityCompat.requestPermissions(getCurrentActivity(), new String[]{
-                android.Manifest.permission.READ_PHONE_STATE,
-                android.Manifest.permission.READ_PHONE_NUMBERS,
-                android.Manifest.permission.READ_SMS,
-                android.Manifest.permission.ACCESS_FINE_LOCATION,
-                android.Manifest.permission.ACCESS_COARSE_LOCATION
-        }, READ_PHONE_STATE_REQUEST);
-    }
+//    private void requestPhoneStatePermissions() {
+//        ActivityCompat.requestPermissions(getCurrentActivity(), new String[]{
+//                android.Manifest.permission.READ_PHONE_STATE,
+//                android.Manifest.permission.READ_PHONE_NUMBERS,
+//                android.Manifest.permission.READ_SMS,
+//                android.Manifest.permission.ACCESS_FINE_LOCATION,
+//                android.Manifest.permission.ACCESS_COARSE_LOCATION
+//        }, READ_PHONE_STATE_REQUEST);
+//    }
 
 }
