@@ -11,6 +11,7 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReadableMap;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Observable;
@@ -70,7 +71,8 @@ public class NetworkLoggingHelper {
                 promise.reject(Constants.E_LOGGER_ALREADY_STARTED, "Network logging has already started.");
             }
             try {
-                logFileWriter = new LogFileWriter("networklogging.json");
+                File file = new File(reactContext.getCacheDir(), "networklogging.json");
+                logFileWriter = new LogFileWriter(file);
                 loggingTask = new TimerTask() {
 
                     @Override
@@ -85,7 +87,8 @@ public class NetworkLoggingHelper {
                                 loggingItem.setPeriod(currentLoggingItem.getStartTs() - loggingItem.getStartTs());
                             }
                             // wrap up
-                            NetworkStats.Bucket bucket = loggingItem.getDataUsage();
+                            NetworkStats.Bucket bucket = networkStatsHelper.getPackageNetworkStatsMobile(loggingItem.getStartTs(), currentLoggingItem.getStartTs()-1);
+                            loggingItem.setDataUsage(bucket);
                             if (bucket != null) {
                                 long period = loggingItem.getPeriod();
                                 long rxBytes = bucket.getRxBytes();
@@ -154,10 +157,10 @@ public class NetworkLoggingHelper {
                     }
                     return;
                 }
-                cleanupLoggingTask();
                 if (this.savedPromise != null) {
-                    this.savedPromise.resolve(null);
+                    this.savedPromise.resolve(logFileWriter.getFilePath());
                 }
+                cleanupLoggingTask();
             } catch (ApplicationException e) {
                 Log.e(Constants.MODULE_NAME, "Unexpected exception when closing log file", e);
                 if (this.savedPromise != null) {

@@ -1,17 +1,13 @@
 package ca.bstech.networklogging.logging;
 
-import android.annotation.TargetApi;
-import android.os.Build;
 import android.telephony.CellIdentityLte;
 import android.telephony.CellIdentityNr;
-import android.telephony.CellInfo;
 import android.telephony.CellSignalStrengthLte;
 import android.telephony.CellSignalStrengthNr;
 import android.util.JsonWriter;
+import android.util.Log;
 
-import com.facebook.react.bridge.WritableMap;
-
-import java.io.FileNotFoundException;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -19,18 +15,24 @@ import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import ca.bstech.networklogging.Constants;
+import ca.bstech.networklogging.networkinfo.CellInfoUtils;
+
 public class LogFileWriter {
 
     private JsonWriter writer;
     private OutputStream fos;
     private SimpleDateFormat tsFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZZZZ");
+    private String filePath;
 
-    public LogFileWriter(String filepath) throws IOException {
-        fos = new FileOutputStream(filepath, false);
+    public LogFileWriter(File file) throws IOException {
+        this.filePath = file.getCanonicalPath();
+        fos = new FileOutputStream(file, false);
         writer = new JsonWriter(new OutputStreamWriter(fos, "UTF-8"));
         writer.setIndent("  ");
         writer.beginArray();
         appendTitle();
+        Log.d(Constants.MODULE_NAME, "Created log file path:"+filePath);
     }
 
     public void close() throws IOException {
@@ -93,65 +95,13 @@ public class LogFileWriter {
         writer.value("|");
         // TODO figure where bands comes from
         // writer.value(cellIdentityLte==null?null:cellIdentityLte.getBands());
-        writer.value(getBandwidth(cellIdentityLte));
-        writer.value(cellIdentityLte==null?null:cellIdentityLte.getCi());
-        writer.value(getEarfcn(cellIdentityLte));
-        writer.value(getMccString(cellIdentityLte));
-        writer.value(getMncString(cellIdentityLte));
-        writer.value(cellIdentityLte==null?null:cellIdentityLte.getPci());
-        writer.value(cellIdentityLte==null?null:cellIdentityLte.getTac());
-    }
-
-    @TargetApi(24)
-    private Integer getEarfcn(CellIdentityLte cellIdentity) {
-        if (cellIdentity == null) return null;
-        if (android.os.Build.VERSION.SDK_INT >= 24) {
-            // Do something for nougat and above versions
-            int earfcn = cellIdentity.getEarfcn();
-            if ( earfcn == CellInfo.UNAVAILABLE ) return null;
-            return earfcn;
-        } else {
-            // do something for phones running an SDK before lollipop
-            return null;
-        }
-    }
-
-    @TargetApi(28)
-    private Integer getBandwidth(CellIdentityLte cellIdentity) {
-        if (cellIdentity == null) return null;
-        if (android.os.Build.VERSION.SDK_INT >= 28) {
-            // Do something for Android 9 Pie and above versions
-            int bandwidth = cellIdentity.getBandwidth();
-            if ( bandwidth == CellInfo.UNAVAILABLE ) return null;
-            return bandwidth;
-        } else {
-            // do something for phones running an SDK before Android 9 Pie
-            return null;
-        }
-    }
-
-    @TargetApi(28)
-    private String getMccString(CellIdentityLte cellIdentity) {
-        if (cellIdentity == null) return null;
-        if (android.os.Build.VERSION.SDK_INT >= 28) {
-            // Do something for Android 9 Pie and above versions
-            String ret = cellIdentity.getMccString();
-            return ret;
-        }
-        // do something for phones running an SDK before Android 9 Pie
-        return null;
-    }
-
-    @TargetApi(28)
-    private String getMncString(CellIdentityLte cellIdentity) {
-        if (cellIdentity == null) return null;
-        if (android.os.Build.VERSION.SDK_INT >= 28) {
-            // Do something for Android 9 Pie and above versions
-            String ret = cellIdentity.getMncString();
-            return ret;
-        }
-        // do something for phones running an SDK before Android 9 Pie
-        return null;
+        writer.value(CellInfoUtils.getBandwidth(cellIdentityLte));
+        writer.value(cellIdentityLte==null?null:CellInfoUtils.filterUnavailable(cellIdentityLte.getCi()));
+        writer.value(CellInfoUtils.getEarfcn(cellIdentityLte));
+        writer.value(CellInfoUtils.getMccString(cellIdentityLte));
+        writer.value(CellInfoUtils.getMncString(cellIdentityLte));
+        writer.value(cellIdentityLte==null?null:CellInfoUtils.filterUnavailable(cellIdentityLte.getPci()));
+        writer.value(cellIdentityLte==null?null:CellInfoUtils.filterUnavailable(cellIdentityLte.getTac()));
     }
 
     private void writeCellIdentityLteTitle() throws IOException {
@@ -174,10 +124,10 @@ public class LogFileWriter {
         // writer.value(cellIdentityNr == null? null: cellIdentityNr.getBands());
         writer.value(cellIdentityNr == null||android.os.Build.VERSION.SDK_INT < 29? null: cellIdentityNr.getMccString());
         writer.value(cellIdentityNr == null||android.os.Build.VERSION.SDK_INT < 29? null: cellIdentityNr.getMncString());
-        writer.value(cellIdentityNr == null||android.os.Build.VERSION.SDK_INT < 29? null: cellIdentityNr.getNci());
-        writer.value(cellIdentityNr == null||android.os.Build.VERSION.SDK_INT < 29? null: cellIdentityNr.getNrarfcn());
-        writer.value(cellIdentityNr == null||android.os.Build.VERSION.SDK_INT < 29? null: cellIdentityNr.getPci());
-        writer.value(cellIdentityNr == null||android.os.Build.VERSION.SDK_INT < 29? null: cellIdentityNr.getTac());
+        writer.value(cellIdentityNr == null||android.os.Build.VERSION.SDK_INT < 29? null: CellInfoUtils.filterUnavailable(cellIdentityNr.getNci()));
+        writer.value(cellIdentityNr == null||android.os.Build.VERSION.SDK_INT < 29? null: CellInfoUtils.filterUnavailable(cellIdentityNr.getNrarfcn()));
+        writer.value(cellIdentityNr == null||android.os.Build.VERSION.SDK_INT < 29? null: CellInfoUtils.filterUnavailable(cellIdentityNr.getPci()));
+        writer.value(cellIdentityNr == null||android.os.Build.VERSION.SDK_INT < 29? null: CellInfoUtils.filterUnavailable(cellIdentityNr.getTac()));
     }
 
     private void writeCellIdentityNrTitle() throws IOException {
@@ -193,19 +143,48 @@ public class LogFileWriter {
     }
 
     private void writeCellSignalStrengthLte(CellSignalStrengthLte cellSignalStrengthLte) throws IOException {
-        // TODO implement
+        // Group separator
+        writer.value("|");
+
+        writer.value(cellSignalStrengthLte == null||android.os.Build.VERSION.SDK_INT < 26?null:CellInfoUtils.filterUnavailable(cellSignalStrengthLte.getCqi()));
+        writer.value(cellSignalStrengthLte == null||android.os.Build.VERSION.SDK_INT < 26?null:CellInfoUtils.filterUnavailable(cellSignalStrengthLte.getRsrp()));
+        writer.value(cellSignalStrengthLte == null||android.os.Build.VERSION.SDK_INT < 26?null:CellInfoUtils.filterUnavailable(cellSignalStrengthLte.getRsrq()));
+        writer.value(cellSignalStrengthLte == null||android.os.Build.VERSION.SDK_INT < 29?null:CellInfoUtils.filterUnavailable(cellSignalStrengthLte.getRssi()));
+        writer.value(cellSignalStrengthLte == null||android.os.Build.VERSION.SDK_INT < 26?null:CellInfoUtils.filterUnavailable(cellSignalStrengthLte.getRssnr()));
+        writer.value(cellSignalStrengthLte == null?null:CellInfoUtils.filterUnavailable(cellSignalStrengthLte.getTimingAdvance()));
     }
 
     private void writeCellSignalStrengthLteTitle() throws IOException {
-        // TODO implement
+        writer.value(""); // For separator
+
+        writer.value("LTE CQI");
+        writer.value("LTE RSRP");
+        writer.value("LTE RSRQ");
+        writer.value("LTE RSSI");
+        writer.value("LTE SNR");
+        writer.value("LTE TA");
     }
 
     private void writeCellSignalStrengthNr(CellSignalStrengthNr cellSignalStrengthNr) throws IOException {
-        // TODO implement
+        writer.value("|");
+
+        writer.value(cellSignalStrengthNr == null||android.os.Build.VERSION.SDK_INT < 29?null:CellInfoUtils.filterUnavailable(cellSignalStrengthNr.getCsiRsrp()));
+        writer.value(cellSignalStrengthNr == null||android.os.Build.VERSION.SDK_INT < 29?null:CellInfoUtils.filterUnavailable(cellSignalStrengthNr.getCsiRsrq()));
+        writer.value(cellSignalStrengthNr == null||android.os.Build.VERSION.SDK_INT < 29?null:CellInfoUtils.filterUnavailable(cellSignalStrengthNr.getCsiSinr()));
+        writer.value(cellSignalStrengthNr == null||android.os.Build.VERSION.SDK_INT < 29?null:CellInfoUtils.filterUnavailable(cellSignalStrengthNr.getSsRsrp()));
+        writer.value(cellSignalStrengthNr == null||android.os.Build.VERSION.SDK_INT < 29?null:CellInfoUtils.filterUnavailable(cellSignalStrengthNr.getSsRsrq()));
+        writer.value(cellSignalStrengthNr == null||android.os.Build.VERSION.SDK_INT < 29?null:CellInfoUtils.filterUnavailable(cellSignalStrengthNr.getSsSinr()));
     }
 
     private void writeCellSignalStrengthNrTitle() throws IOException {
-        // TODO implement
+        writer.value(""); // For separator
+
+        writer.value("5G CSI RSRP");
+        writer.value("5G CSI RSRQ");
+        writer.value("5G CSI SINR");
+        writer.value("5G SS RSRP");
+        writer.value("5G SS RSRQ");
+        writer.value("5G SS SINR");
     }
 
     private void writeThroughoutput(LoggingItem loggingItem) throws IOException {
@@ -234,4 +213,7 @@ public class LogFileWriter {
         writer.value("worst");
     }
 
+    public String getFilePath() {
+        return this.filePath;
+    }
 }

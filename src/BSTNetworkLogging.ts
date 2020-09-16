@@ -124,7 +124,7 @@ export async function stopPingAsync(): Promise<void> {
   await BSTNetworkLoggingModule.stopAsync();
 }
 
-export async function startNetworkLoggingAsync(): Promise<void> {
+export async function startNetworkLoggingAsync(): Promise<String> {
   return await BSTNetworkLoggingModule.startNetworkLoggingAsync();
 }
 

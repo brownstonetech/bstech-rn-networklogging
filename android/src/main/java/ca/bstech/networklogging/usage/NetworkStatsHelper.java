@@ -40,9 +40,9 @@ public class NetworkStatsHelper {
 //        return bucket;
 //    }
 
-    public NetworkStats.Bucket getPackageNetworkStatsMobile() {
-        return getPackageNetworkStatsMobile(null, null);
-    }
+//    public NetworkStats.Bucket getPackageNetworkStatsMobile() {
+//        return getPackageNetworkStatsMobile(null, null);
+//    }
 
     public NetworkStats.Bucket getPackageNetworkStatsMobile(Long startDate, Long endDate) {
         NetworkStats networkStats = null;
@@ -70,34 +70,34 @@ public class NetworkStatsHelper {
         return "";
     }
 
-    private WritableArray getDataUsage(long startTs, long endTs) {
-        WritableArray appStats = getNetworkManagerStats(startTs, endTs);
-        return appStats;
-    }
+//    private WritableArray getDataUsage(long startTs, long endTs) {
+//        WritableArray appStats = getNetworkManagerStats(startTs, endTs);
+//        return appStats;
+//    }
 
-    /**
-     * @param startDate
-     * @param endDate
-     * @return
-     * Array contains 2 elements:
-     * [0] start timestamp
-     * [1] end timestamp
-     * [2] Tx KB
-     * [3] Rx KB
-     */
-    private WritableArray getNetworkManagerStats(Long startDate, Long endDate) {
-        WritableArray array = Arguments.createArray();
-        //Log.i(TAG, "##### Step getNetworkManagerStats(" + uid + ", " + name + ", ...)");
-
-        NetworkStats.Bucket bucket = getPackageNetworkStatsMobile(
-                startDate, endDate);
-        array.pushString(String.valueOf(bucket.getStartTimeStamp()));
-        array.pushString(String.valueOf(bucket.getEndTimeStamp()));
-        array.pushInt((int)bucket.getTxBytes()/1024);
-        array.pushInt((int)bucket.getRxBytes()/1024);
-        Log.i(Constants.MODULE_NAME, "##### getNetworkManagerStats "
-                + " - tx: " + bucket.getTxBytes() + " | rx: " + bucket.getRxBytes());
-        return array;
-    }
+//    /**
+//     * @param startDate
+//     * @param endDate
+//     * @return
+//     * Array contains 2 elements:
+//     * [0] start timestamp
+//     * [1] end timestamp
+//     * [2] Tx KB
+//     * [3] Rx KB
+//     */
+//    private WritableArray getNetworkManagerStats(Long startDate, Long endDate) {
+//        WritableArray array = Arguments.createArray();
+//        //Log.i(TAG, "##### Step getNetworkManagerStats(" + uid + ", " + name + ", ...)");
+//
+//        NetworkStats.Bucket bucket = getPackageNetworkStatsMobile(
+//                startDate, endDate);
+//        array.pushString(String.valueOf(bucket.getStartTimeStamp()));
+//        array.pushString(String.valueOf(bucket.getEndTimeStamp()));
+//        array.pushInt((int)bucket.getTxBytes()/1024);
+//        array.pushInt((int)bucket.getRxBytes()/1024);
+//        Log.i(Constants.MODULE_NAME, "##### getNetworkManagerStats "
+//                + " - tx: " + bucket.getTxBytes() + " | rx: " + bucket.getRxBytes());
+//        return array;
+//    }
 
 }

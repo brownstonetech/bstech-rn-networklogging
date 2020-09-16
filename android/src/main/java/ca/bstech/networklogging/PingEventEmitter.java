@@ -8,12 +8,12 @@ import com.facebook.react.modules.core.DeviceEventManagerModule;
 import java.util.Observable;
 import java.util.Observer;
 
-public class EventEmitter implements Observer {
+public class PingEventEmitter implements Observer {
 
     private ReactApplicationContext reactContext;
     private String eventType;
 
-    public EventEmitter(ReactApplicationContext reactContext, String eventType) {
+    public PingEventEmitter(ReactApplicationContext reactContext, String eventType) {
         this.reactContext = reactContext;
         this.eventType = eventType;
     }
@@ -28,19 +28,5 @@ public class EventEmitter implements Observer {
     public void update(Observable o, Object result) {
         sendEvent(eventType, result);
     }
-
-//    public void emitExceptionMessage(String eventName, Throwable e) {
-//        WritableArray array = Arguments.createArray();
-//        array.pushString(e.getMessage());
-//        sendEvent(eventName, array);
-//    }
-//
-//    public void emitStartMessage() {
-//        sendEvent(Constants.DATA_USAGE_START, null);
-//    }
-//
-//    public void emitStopMessage() {
-//        sendEvent(Constants.DATA_USAGE_END, null);
-//    }
 
 }

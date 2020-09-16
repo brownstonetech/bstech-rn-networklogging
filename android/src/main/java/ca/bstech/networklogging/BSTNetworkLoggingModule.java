@@ -34,7 +34,7 @@ public class BSTNetworkLoggingModule extends ReactContextBaseJavaModule implemen
         super(reactContext);
         reactContext.addLifecycleEventListener(this);
         pingHelper = new PingHelper(reactContext);
-        Observer pingEventEmitter = new EventEmitter(reactContext, Constants.PING_EVENT);
+        Observer pingEventEmitter = new PingEventEmitter(reactContext, Constants.PING_EVENT);
         pingHelper.getObservable().addObserver(pingEventEmitter);
     }
 
@@ -46,6 +46,7 @@ public class BSTNetworkLoggingModule extends ReactContextBaseJavaModule implemen
 
             telephonyHelper = new TelephonyHelper(reactContext);
             telephonyHelper.addObserver(networkLoggingHelper.getNetInfoObserver());
+            telephonyHelper.addObserver(new PingEventEmitter(reactContext, Constants.NETWORK_INFO_EVENT));
             telephonyHelper.startListener();
 
             pingHelper.getObservable().addObserver(networkLoggingHelper.getPingObserver());
