@@ -91,5 +91,5 @@ export declare function stopPingAsync(): Promise<void>;
 export declare function startNetworkLoggingAsync(): Promise<void>;
 export declare function stopNetworkLoggingAsync(): Promise<void>;
 export declare function getPhoneInfoAsync(): Promise<PhoneInfo>;
-export declare function requestPermissionsAsync(options: RequestPermissionOptions): Promise<boolean>;
+export declare function requestPermissionsAsync(options?: RequestPermissionOptions): Promise<boolean>;
 export declare function initializeAsync(): Promise<void>;

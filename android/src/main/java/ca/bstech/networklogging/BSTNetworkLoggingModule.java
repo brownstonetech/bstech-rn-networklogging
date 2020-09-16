@@ -138,9 +138,8 @@ public class BSTNetworkLoggingModule extends ReactContextBaseJavaModule implemen
     @ReactMethod
     public void requestPermissionsAsync(final ReadableMap map, final Promise promise) {
         Log.i(Constants.MODULE_NAME, "##### Executando requestPermissions(" + (map != null && map.hasKey("requestPermission") ? map.getString("requestPermission") : "null") + ")");
-
-        boolean requestPermission = map.hasKey("requestPermission") ? Boolean.parseBoolean(map.getString("requestPermission")) : true;
         try {
+            boolean requestPermission = (map != null && map.hasKey("requestPermission")) ? map.getBoolean("requestPermission"): true;
             if (!hasPermissionToReadNetworkHistory(requestPermission)) {
                 boolean hasPermission = hasPermissionToReadNetworkHistory(false);
                 if (!hasPermission) {
