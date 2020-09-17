@@ -75,4 +75,10 @@ public class PingResultParser extends Observable implements Consumer<String> {
         this.notifyObservers(map);
     }
 
+    @Override
+    public synchronized boolean hasChanged() {
+        // Change the default behavior on changed
+        return true;
+    }
+
 }

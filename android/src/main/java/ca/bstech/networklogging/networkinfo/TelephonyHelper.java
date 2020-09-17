@@ -80,6 +80,12 @@ public class TelephonyHelper extends Observable
         getCellInfo();
     }
 
+    @Override
+    public synchronized boolean hasChanged() {
+        // Change the default behavior on changed
+        return true;
+    }
+
     public void stopListener() {
         if ( telephonyPhoneStateListener == null ) return;
         telephonyManager.listen(telephonyPhoneStateListener,
