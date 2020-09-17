@@ -77,6 +77,7 @@ public class BSTNetworkLoggingModule extends ReactContextBaseJavaModule implemen
     @ReactMethod
     public void startPingAsync(final String domainName, ReadableMap params, ReadableMap pingOptions, final Promise promise) {
         try {
+            Log.d(Constants.MODULE_NAME, "Start ping "+domainName);
             pingHelper.startPingAsync(domainName, params, pingOptions);
             promise.resolve(null);
         } catch(ApplicationException e) {

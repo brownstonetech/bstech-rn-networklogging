@@ -66,7 +66,7 @@ public class PingHelper {
                 @Override
                 public void run() {
                     try {
-//                        pingEventEmitter.emitStartMessage();
+                        Log.d(Constants.MODULE_NAME, "Running ping command "+ domainName+" for "+durationSeconds+" seconds");
                         ping(domainName, options, durationSeconds,
                                 reportIntervalSeconds, pingResultParser);
 //                        pingEventEmitter.emitStopMessage();

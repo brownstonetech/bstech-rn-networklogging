@@ -1,5 +1,7 @@
 package ca.bstech.networklogging;
 
+import android.util.Log;
+
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.WritableArray;
@@ -18,15 +20,16 @@ public class PingEventEmitter implements Observer {
         this.eventType = eventType;
     }
 
-    private void sendEvent(String eventName, Object params) {
+    private void sendEvent(Object params) {
+        Log.d(Constants.MODULE_NAME, "Emitting JS event:"+eventType+":"+ params.toString());
         reactContext
                 .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                .emit(eventName, params);
+                .emit(eventType, params);
     }
 
     @Override
     public void update(Observable o, Object result) {
-        sendEvent(eventType, result);
+        sendEvent(result);
     }
 
 }

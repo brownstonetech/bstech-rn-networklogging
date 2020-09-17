@@ -1,5 +1,7 @@
 package ca.bstech.networklogging.ping;
 
+import android.util.Log;
+
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableMap;
 
@@ -7,6 +9,7 @@ import java.util.Observable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ca.bstech.networklogging.Constants;
 import ca.bstech.networklogging.Consumer;
 
 import static ca.bstech.networklogging.Constants.ICMP_PACKET;
@@ -32,6 +35,7 @@ public class PingResultParser extends Observable implements Consumer<String> {
 
         WritableMap map = Arguments.createMap();
         map.putString("raw", result);
+        Log.d(Constants.MODULE_NAME, "Ping task received ping message: "+result);
         matcher = icmpSeqPattern.matcher(result);
         if ( matcher.find()) {
             map.putString("type", ICMP_PACKET);
