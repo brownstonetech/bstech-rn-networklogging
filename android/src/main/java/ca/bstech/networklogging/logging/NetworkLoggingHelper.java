@@ -1,6 +1,6 @@
 package ca.bstech.networklogging.logging;
 
-import android.app.usage.NetworkStats;
+import android.net.TrafficStats;
 import android.telephony.CellIdentityNr;
 import android.telephony.CellInfoLte;
 import android.telephony.CellInfoNr;
@@ -23,7 +23,6 @@ import ca.bstech.networklogging.ApplicationException;
 import ca.bstech.networklogging.Constants;
 import ca.bstech.networklogging.networkinfo.CellInfos;
 import ca.bstech.networklogging.networkinfo.TelephonyHelper;
-import ca.bstech.networklogging.usage.NetworkStatsHelper;
 
 import static ca.bstech.networklogging.Constants.ICMP_PACKET;
 
@@ -35,7 +34,6 @@ public class NetworkLoggingHelper {
     private Observer pingObserver;
     private Observer netInfoObserver;
     private Observer locationObserver;
-    private NetworkStatsHelper networkStatsHelper;
     private Exception savedException;
 
     private LogFileWriter logFileWriter;
@@ -51,8 +49,8 @@ public class NetworkLoggingHelper {
         this.telephonyHelper = telephonyHelper;
         pingObserver = new LoggingPingObserver();
         netInfoObserver = new NetworkInfo();
-        networkStatsHelper = new NetworkStatsHelper(reactContext);
         currentLoggingItem = new LoggingItem();
+
     }
 
     public Observer getPingObserver() {
@@ -88,9 +86,7 @@ public class NetworkLoggingHelper {
                                     return;
                                 }
                                 // switching currentLoggingItem;
-                                loggingItem = currentLoggingItem;
-                                currentLoggingItem = new LoggingItem(loggingItem);
-                                loggingItem.setPeriod(currentLoggingItem.getStartTs() - loggingItem.getStartTs());
+                                loggingItem = switchLoggingItem(false);
                             }
 
                             // Capture realtime network info
@@ -100,25 +96,16 @@ public class NetworkLoggingHelper {
 
                             // Capture historical net usage stats
                             long period = loggingItem.getPeriod();
-                            NetworkStats.Bucket bucket = networkStatsHelper.getPackageNetworkStatsMobile(loggingItem.getStartTs(), loggingItem.getStartTs()+period);
-                            loggingItem.setDataUsage(bucket);
-                            if (bucket != null) {
-                                long rxBytes = bucket.getRxBytes();
-                                long txBytes = bucket.getTxBytes();
-                                Log.d(Constants.MODULE_NAME, "Get networkStatus.bucket"
-                                        +": startTimeStamp="+bucket.getStartTimeStamp()
-                                        +", endTimeStamp="+bucket.getEndTimeStamp()
+                                long txBytes = currentLoggingItem.getStartTxBytes() - loggingItem.getStartTxBytes();
+                                long rxBytes = currentLoggingItem.getStartRxBytes() - loggingItem.getStartRxBytes();
+                                Log.d(Constants.MODULE_NAME, "Get networkStats"
+                                        +": startTimeStamp="+loggingItem.getStartTs()
                                         +", rxBytes="+rxBytes
                                         +", txBytes="+txBytes
                                         +", period="+period
                                 );
                                 loggingItem.setDownlinkBps(((double) rxBytes * 8) /((double)period / 1000)/(1024 * 1024));
                                 loggingItem.setUplinkBps(((double) txBytes * 8) / ((double)period / 1000)/(1024 * 1024));
-                            } else {
-                                Log.w(Constants.MODULE_NAME, "Get networkStatus.bucket return null");
-                                loggingItem.setDownlinkBps(0);
-                                loggingItem.setUplinkBps(0);
-                            }
                             synchronized(me) {
                                 if ( logFileWriter == null ) {
                                     Log.d(Constants.MODULE_NAME, "Detected loggingTask run after stop at point 2");
@@ -147,9 +134,9 @@ public class NetworkLoggingHelper {
                     }
 
                 };
-                // switch once when new task start
                 loggingIntervalTimer.purge();
-                currentLoggingItem = new LoggingItem(currentLoggingItem);
+                // switch once when new task start
+                switchLoggingItem(true);
                 loggingIntervalTimer.scheduleAtFixedRate(loggingTask, loggingInveral, loggingInveral);
                 this.savedPromise = promise;
             } catch (Exception e) {
@@ -161,6 +148,21 @@ public class NetworkLoggingHelper {
                 promise.reject(Constants.E_RUNTIME_EXCEPTION, "Unexpected exception when initializing netowrk logging task", e);
             }
         }
+    }
+
+    private synchronized LoggingItem switchLoggingItem(boolean ignorePrevious) {
+        LoggingItem previousLoggingItem = currentLoggingItem;
+        currentLoggingItem = new LoggingItem(previousLoggingItem);
+        long txBytesTotal = TrafficStats.getTotalTxBytes();
+        long rxBytesTotal = TrafficStats.getTotalRxBytes();
+        currentLoggingItem.setStartTxBytes(txBytesTotal);
+        currentLoggingItem.setStartRxBytes(rxBytesTotal);
+        if ( !ignorePrevious ) {
+            previousLoggingItem.setTxBytes((int) (txBytesTotal - previousLoggingItem.getStartTxBytes()));
+            previousLoggingItem.setRxBytes((int) (rxBytesTotal - previousLoggingItem.getStartRxBytes()));
+            previousLoggingItem.setPeriod(currentLoggingItem.getStartTs() - previousLoggingItem.getStartTs());
+        }
+        return previousLoggingItem;
     }
 
     private synchronized void cleanupLoggingTask() throws ApplicationException {

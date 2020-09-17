@@ -27,7 +27,13 @@ public class LoggingItem {
     private CellSignalStrengthLte cellSignalStrengthLte;
     private CellSignalStrengthNr cellSignalStrengthNr;
 
-    private NetworkStats.Bucket dataUsage;
+    //    private NetworkStats.Bucket dataUsage;
+    private long startRxBytes;
+    private long startTxBytes;
+
+    private int txBytes;
+    private int rxBytes;
+
     private double downlinkBps;
     private double uplinkBps;
 
@@ -144,14 +150,14 @@ public class LoggingItem {
         this.cellSignalStrengthNr = cellSignalStrengthNr;
     }
 
-    public NetworkStats.Bucket getDataUsage() {
-        return dataUsage;
-    }
-
-    public void setDataUsage(NetworkStats.Bucket dataUsage) {
-        this.dataUsage = dataUsage;
-    }
-
+//    public NetworkStats.Bucket getDataUsage() {
+//        return dataUsage;
+//    }
+//
+//    public void setDataUsage(NetworkStats.Bucket dataUsage) {
+//        this.dataUsage = dataUsage;
+//    }
+//
     public double getDownlinkBps() {
         return downlinkBps;
     }
@@ -195,4 +201,37 @@ public class LoggingItem {
     public List<Double> getAccumulatedLatency() {
         return accumulatedLatency;
     }
+
+    public long getStartRxBytes() {
+        return startRxBytes;
+    }
+
+    public void setStartRxBytes(long startRxBytes) {
+        this.startRxBytes = startRxBytes;
+    }
+
+    public long getStartTxBytes() {
+        return startTxBytes;
+    }
+
+    public void setStartTxBytes(long startTxBytes) {
+        this.startTxBytes = startTxBytes;
+    }
+
+    public int getTxBytes() {
+        return txBytes;
+    }
+
+    public void setTxBytes(int txBytes) {
+        this.txBytes = txBytes;
+    }
+
+    public int getRxBytes() {
+        return rxBytes;
+    }
+
+    public void setRxBytes(int rxBytes) {
+        this.rxBytes = rxBytes;
+    }
+
 }
