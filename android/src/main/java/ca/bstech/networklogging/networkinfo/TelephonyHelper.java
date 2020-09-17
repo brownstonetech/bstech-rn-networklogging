@@ -114,9 +114,19 @@ public class TelephonyHelper extends Observable
 
     public WritableMap getPhoneInfo() throws ApplicationException {
         WritableMap mapPhoneInfo = Arguments.createMap();
-
-        mapPhoneInfo.putString("imsi", telephonyManager.getSubscriberId());
-        mapPhoneInfo.putString("imei", telephonyManager.getDeviceId());
+        try {
+            String imsi = telephonyManager.getSubscriberId();
+            mapPhoneInfo.putString("imsi", telephonyManager.getSubscriberId());
+        } catch (SecurityException e ) {
+            // silently ignore this exception
+            Log.d(Constants.MODULE_NAME, "Can not retrieve IMSI:"+e.getMessage());
+        }
+        try {
+            mapPhoneInfo.putString("imei", telephonyManager.getDeviceId());
+        } catch (SecurityException e ) {
+            // silently ignore this exception
+            Log.d(Constants.MODULE_NAME, "Can not retrieve IMEI:"+e.getMessage());
+        }
         mapPhoneInfo.putString("model", Build.MANUFACTURER
                 + " " + Build.MODEL + " " + Build.VERSION.RELEASE
                 + " " + Build.VERSION_CODES.class.getFields()[Build.VERSION.SDK_INT].getName());
