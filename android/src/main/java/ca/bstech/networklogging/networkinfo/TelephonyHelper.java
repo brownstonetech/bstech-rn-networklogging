@@ -70,6 +70,7 @@ public class TelephonyHelper extends Observable
            telephonyPhoneStateListener = new TelephonyListener(this);
         }
         int events = PhoneStateListener.LISTEN_CELL_INFO;
+        Log.d(Constants.MODULE_NAME, "Register telephonyPhoneStateListener with events "+events);
         telephonyManager.listen(telephonyPhoneStateListener, events);
         getCellInfo();
     }
@@ -101,7 +102,9 @@ public class TelephonyHelper extends Observable
             Log.w(Constants.MODULE_NAME, "Don't have permission ACCESS_FINE_LOCATION, call getAllCellInfo() ignored");
             return;
         }
+        Log.d(Constants.MODULE_NAME, "Invoking telephonyManager.getAllCellInfo");
         List<CellInfo> cellInfo = telephonyManager.getAllCellInfo();
+        Log.d(Constants.MODULE_NAME, "Invoking telephonyManager.getAllCellInfo returned "+cellInfo.size()+" CellInfos.");
         handleCellInfos(cellInfo);
     }
 
@@ -141,6 +144,7 @@ public class TelephonyHelper extends Observable
 
     @Override
     public void phoneCellInfoUpdated(List<CellInfo> cellInfo) {
+        Log.d(Constants.MODULE_NAME, "CellInfo update event received. cellInfo="+cellInfo.toString());
         if (cellInfo == null) {
             return;
         }
@@ -151,11 +155,16 @@ public class TelephonyHelper extends Observable
         CellInfos cellInfos = new CellInfos();
         for (CellInfo info : cellInfo) {
             if (info instanceof CellInfoLte) {
+                Log.d(Constants.MODULE_NAME, "Processing cellInfoLte");
                 cellInfos.addCellInfoLte((CellInfoLte)info);
             } else if (Build.VERSION.SDK_INT >= 29 && (info instanceof CellInfoNr)) {
+                Log.d(Constants.MODULE_NAME, "Processing cellInfoNr");
                 cellInfos.addCellInfoNr((CellInfoNr)info);
+            } else {
+                Log.d(Constants.MODULE_NAME, "Ignoring cellInfo class="+info.getClass().getSimpleName());
             }
         }
+        Log.d(Constants.MODULE_NAME, "Proessed CellInfos:"+ cellInfos);
         this.notifyObservers(cellInfos);
     }
 

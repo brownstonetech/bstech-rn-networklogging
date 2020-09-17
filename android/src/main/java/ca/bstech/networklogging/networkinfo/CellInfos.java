@@ -11,7 +11,11 @@ public class CellInfos {
     private List<CellInfoNr> cellInfoNrList = new ArrayList<>();
 
     public void addCellInfoLte(CellInfoLte cellInfoLte) {
-        if ( cellInfoLteList == null ) cellInfoLteList = new ArrayList<>();
+        if ( cellInfoLteList == null ) {
+            ArrayList<CellInfoLte> temp = new ArrayList<>();
+            temp.toString();
+            cellInfoLteList = temp;
+        }
         cellInfoLteList.add(cellInfoLte);
     }
 
@@ -26,5 +30,13 @@ public class CellInfos {
 
     public List<CellInfoNr> getCellInfoNr() {
         return cellInfoNrList;
+    }
+
+    @Override
+    public String toString() {
+        return "CellInfos{" +
+                "cellInfoLteList=" + cellInfoLteList +
+                ", cellInfoNrList=" + cellInfoNrList +
+                '}';
     }
 }
