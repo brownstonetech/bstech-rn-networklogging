@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.telephony.CellInfo;
 import android.telephony.CellInfoLte;
@@ -72,6 +73,11 @@ public class TelephonyHelper extends Observable
         int events = PhoneStateListener.LISTEN_CELL_INFO;
         Log.d(Constants.MODULE_NAME, "Register telephonyPhoneStateListener with events "+events);
         telephonyManager.listen(telephonyPhoneStateListener, events);
+        if (android.os.Build.VERSION.SDK_INT >= 29 ) {
+            Log.d(Constants.MODULE_NAME, "Requested cellInfoUpdate");
+            telephonyManager.requestCellInfoUpdate(AsyncTask.THREAD_POOL_EXECUTOR,
+                    new CellInfoCallback(this));
+        }
         getCellInfo();
     }
 
