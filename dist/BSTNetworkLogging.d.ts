@@ -88,6 +88,7 @@ export declare function startPingAsync(domainName: string, params?: PingParams, 
     [name: string]: string;
 }): Promise<void>;
 export declare function stopPingAsync(): Promise<void>;
+export declare function hasTelephonyFeatureAsync(): Promise<boolean>;
 export declare function startNetworkLoggingAsync(): Promise<String>;
 export declare function stopNetworkLoggingAsync(): Promise<void>;
 export declare function getPhoneInfoAsync(): Promise<PhoneInfo>;

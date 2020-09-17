@@ -121,7 +121,11 @@ export async function startPingAsync(
 }
 
 export async function stopPingAsync(): Promise<void> {
-  await BSTNetworkLoggingModule.stopAsync();
+  await BSTNetworkLoggingModule.stopPingAsync();
+}
+
+export async function hasTelephonyFeatureAsync(): Promise<boolean> {
+  return await BSTNetworkLoggingModule.hasTelephonyFeatureAsync();
 }
 
 export async function startNetworkLoggingAsync(): Promise<String> {

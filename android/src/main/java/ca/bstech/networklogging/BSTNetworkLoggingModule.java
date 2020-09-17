@@ -15,6 +15,7 @@ import android.app.Activity;
 import android.app.AppOpsManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.provider.Settings;
 import android.util.Log;
 
@@ -103,6 +104,18 @@ public class BSTNetworkLoggingModule extends ReactContextBaseJavaModule implemen
     public void onHostDestroy() {
         stopPingAsync(null);
         stopNetworkLoggingAsync(null);
+    }
+
+    @ReactMethod
+    public void hasTelephonyFeatureAsync(Promise promise) {
+        try {
+            boolean hasTelephonyFeature = getReactApplicationContext().getPackageManager()
+                    .hasSystemFeature(PackageManager.FEATURE_TELEPHONY);
+            promise.resolve(hasTelephonyFeature);
+        } catch (Exception e) {
+            Log.e(Constants.MODULE_NAME, "Unexpected exception in hasTelephonyFeatureAsync", e);
+            promise.reject(Constants.E_RUNTIME_EXCEPTION, e);
+        }
     }
 
     @ReactMethod
