@@ -133,7 +133,7 @@ export async function stopNetworkLoggingAsync(): Promise<void> {
 }
 
 export async function getPhoneInfoAsync(): Promise<PhoneInfo> {
-  return await BSTNetworkLoggingModule.getPhoneInfo();
+  return await BSTNetworkLoggingModule.getPhoneInfoAsync();
 }
 
 export async function requestPermissionsAsync(options?: RequestPermissionOptions): Promise<boolean> {
