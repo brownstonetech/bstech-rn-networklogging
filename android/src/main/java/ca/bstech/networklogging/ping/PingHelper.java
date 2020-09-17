@@ -22,10 +22,6 @@ import ca.bstech.networklogging.Constants;
 import ca.bstech.networklogging.Consumer;
 
 
-/**
- * Permission required: <br/>
- * <uses-permission android:name="android.permission.INTERNET"/>
- */
 public class PingHelper {
 
     private Process process = null;
