@@ -3,8 +3,11 @@ package ca.bstech.networklogging.networkinfo;
 import android.telephony.CellInfo;
 import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
+import android.util.Log;
 
 import java.util.List;
+
+import ca.bstech.networklogging.Constants;
 
 public class TelephonyListener extends PhoneStateListener {
 
@@ -27,7 +30,11 @@ public class TelephonyListener extends PhoneStateListener {
 
     @Override
     public void onCellInfoChanged(List<CellInfo> cellInfo) {
-        this.callStatCallBack.phoneCellInfoUpdated(cellInfo);
+        try {
+            this.callStatCallBack.phoneCellInfoUpdated(cellInfo);
+        } catch (Exception e) {
+            Log.e(Constants.MODULE_NAME, "Processing CellInfoChanged event encounter unexpected exception", e);
+        }
     }
 
     @Override

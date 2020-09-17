@@ -144,7 +144,7 @@ public class TelephonyHelper extends Observable
 
     @Override
     public void phoneCellInfoUpdated(List<CellInfo> cellInfo) {
-        Log.d(Constants.MODULE_NAME, "CellInfo update event received. cellInfo="+cellInfo.toString());
+        Log.d(Constants.MODULE_NAME, "CellInfo update event received. cellInfo="+cellInfo);
         if (cellInfo == null) {
             return;
         }
@@ -152,6 +152,7 @@ public class TelephonyHelper extends Observable
     }
 
     private void handleCellInfos(List<CellInfo> cellInfo) {
+        Log.d(Constants.MODULE_NAME, "Processing cellInfos:"+ cellInfo);
         CellInfos cellInfos = new CellInfos();
         for (CellInfo info : cellInfo) {
             if (info instanceof CellInfoLte) {
@@ -164,7 +165,7 @@ public class TelephonyHelper extends Observable
                 Log.d(Constants.MODULE_NAME, "Ignoring cellInfo class="+info.getClass().getSimpleName());
             }
         }
-        Log.d(Constants.MODULE_NAME, "Proessed CellInfos:"+ cellInfos);
+        Log.d(Constants.MODULE_NAME, "Processed CellInfos:"+ cellInfos);
         this.notifyObservers(cellInfos);
     }
 
