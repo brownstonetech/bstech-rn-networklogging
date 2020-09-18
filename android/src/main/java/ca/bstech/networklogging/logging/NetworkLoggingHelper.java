@@ -247,12 +247,13 @@ public class NetworkLoggingHelper {
         public void update(Observable o, Object arg) {
             if ( arg == null ) return;
             synchronized(NetworkLoggingHelper.this) {
+                Log.d(Constants.MODULE_NAME, "Processing network info for log file");
                 if (currentLoggingItem == null) return;
                 CellInfos cellInfos = (CellInfos)arg;
                 List<CellInfoLte> cellInfoLteList = cellInfos.getCellInfoLte();
                 if ( cellInfoLteList != null && cellInfoLteList.size()>0 ) {
                     if (cellInfoLteList.size()>1 ) {
-                        // TODO notify application there is something unusual,
+                        Log.w(Constants.MODULE_NAME, "Find more than one cellInfoLTE items, will take the first one");
                     }
                     // Just return the first one
                     CellInfoLte cellInfoLte = cellInfoLteList.get(0);
@@ -262,7 +263,7 @@ public class NetworkLoggingHelper {
                 List<CellInfoNr> cellInfoNrList = cellInfos.getCellInfoNr();
                 if ( cellInfoNrList != null && cellInfoNrList.size()>0 ) {
                     if (cellInfoNrList.size() >1 ) {
-                        // TODO notify application there is something unusual
+                        Log.w(Constants.MODULE_NAME, "Find more than one cellInfoNr items, will take the first one");
                     }
                     // Just return the first one
                     CellInfoNr cellInfoNr = cellInfoNrList.get(0);
@@ -271,6 +272,7 @@ public class NetworkLoggingHelper {
                         currentLoggingItem.setCellSignalStrengthNr((CellSignalStrengthNr) cellInfoNr.getCellSignalStrength());
                     }
                 }
+                Log.d(Constants.MODULE_NAME, "Processed network info for log file");
             }
         }
     }

@@ -48,7 +48,7 @@ public class LoggingItem {
 
     public LoggingItem(LoggingItem previous) {
         this();
-        // carry over fields
+        // carry over these fields
         this.imsi = previous.getImsi();
         this.latitude = previous.getLatitude();
         this.longitude = previous.getLongitude();

@@ -7,6 +7,7 @@ import android.telephony.CellInfoLte;
 import android.telephony.CellInfoNr;
 import android.telephony.CellSignalStrengthLte;
 import android.telephony.CellSignalStrengthNr;
+import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
@@ -33,19 +34,21 @@ public class NetInfoEventEmitter implements Observer {
         this.eventType = eventType;
     }
 
-    private void sendEvent(String eventName, Object params) {
+    private void sendEvent(Object params) {
+        Log.d(Constants.MODULE_NAME, "Sending NetworkInfo event to JS App.");
         reactContext
                 .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                .emit(eventName, params);
+                .emit(eventType, params);
     }
 
     @Override
     public void update(Observable o, Object result) {
         if ( result == null ) return;
-        sendEvent(eventType, process(result));
+        sendEvent(process(result));
     }
 
     private WritableMap process(Object result) {
+        Log.d(Constants.MODULE_NAME, "Start processing network info for JS");
         WritableMap ret = Arguments.createMap();
         CellInfos cellInfos = (CellInfos) result;
         List<CellInfoLte> cellInfoLtes = cellInfos.getCellInfoLte();
