@@ -1,11 +1,11 @@
 package ca.bstech.networklogging.logging;
 
-import android.app.usage.NetworkStats;
 import android.telephony.CellIdentityLte;
 import android.telephony.CellIdentityNr;
 import android.telephony.CellSignalStrengthLte;
 import android.telephony.CellSignalStrengthNr;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,8 +23,8 @@ public class LoggingItem {
     private Integer accessNetworkType;
 
     private CellIdentityLte cellIdentityLte;
-    private CellIdentityNr cellIdentityNr;
     private CellSignalStrengthLte cellSignalStrengthLte;
+    private CellIdentityNr cellIdentityNr;
     private CellSignalStrengthNr cellSignalStrengthNr;
 
     //    private NetworkStats.Bucket dataUsage;
@@ -34,8 +34,8 @@ public class LoggingItem {
     private int txBytes;
     private int rxBytes;
 
-    private double downlinkBps;
-    private double uplinkBps;
+    private BigDecimal downlinkBps;
+    private BigDecimal uplinkBps;
 
     private Double latencyMin;
     private Double latencyMax;
@@ -150,27 +150,19 @@ public class LoggingItem {
         this.cellSignalStrengthNr = cellSignalStrengthNr;
     }
 
-//    public NetworkStats.Bucket getDataUsage() {
-//        return dataUsage;
-//    }
-//
-//    public void setDataUsage(NetworkStats.Bucket dataUsage) {
-//        this.dataUsage = dataUsage;
-//    }
-//
-    public double getDownlinkBps() {
+    public BigDecimal getDownlinkBps() {
         return downlinkBps;
     }
 
-    public void setDownlinkBps(double downlinkBps) {
+    public void setDownlinkBps(BigDecimal downlinkBps) {
         this.downlinkBps = downlinkBps;
     }
 
-    public double getUplinkBps() {
+    public BigDecimal getUplinkBps() {
         return uplinkBps;
     }
 
-    public void setUplinkBps(double uplinkBps) {
+    public void setUplinkBps(BigDecimal uplinkBps) {
         this.uplinkBps = uplinkBps;
     }
 

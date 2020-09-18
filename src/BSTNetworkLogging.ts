@@ -104,6 +104,11 @@ export type PingParams = {
   reportIntervalSeconds?: number;
 };
 
+export type Coordination = {
+  latitude: number;
+  longitude: number;
+};
+
 export function registerPingListener(listener: (event: PingEvent) => any): EmitterSubscription {
   return eventEmitter.addListener(pingEventType, listener);
 }
@@ -146,4 +151,8 @@ export async function requestPermissionsAsync(options?: RequestPermissionOptions
 
 export async function initializeAsync(): Promise<void> {
   await BSTNetworkLoggingModule.initializeAsync();
+}
+
+export async function feedLocationAsync(location: Coordination): Promise<void> {
+  await BSTNetworkLoggingModule.feedLocationAsync(location);
 }

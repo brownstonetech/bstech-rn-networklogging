@@ -82,6 +82,10 @@ export declare type PingParams = {
     durationSeconds?: number;
     reportIntervalSeconds?: number;
 };
+export declare type Coordination = {
+    latitude: number;
+    longitude: number;
+};
 export declare function registerPingListener(listener: (event: PingEvent) => any): EmitterSubscription;
 export declare function registerNetworkInfoListener(listener: (event: NetworkInfoEvent) => any): EmitterSubscription;
 export declare function startPingAsync(domainName: string, params?: PingParams, options?: {
@@ -94,3 +98,4 @@ export declare function stopNetworkLoggingAsync(): Promise<void>;
 export declare function getPhoneInfoAsync(): Promise<PhoneInfo>;
 export declare function requestPermissionsAsync(options?: RequestPermissionOptions): Promise<boolean>;
 export declare function initializeAsync(): Promise<void>;
+export declare function feedLocationAsync(location: Coordination): Promise<void>;

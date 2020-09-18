@@ -13,6 +13,8 @@ import com.facebook.react.bridge.ReadableMap;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -34,7 +36,6 @@ public class NetworkLoggingHelper {
     private Observer pingObserver;
     private Observer netInfoObserver;
     private Observer locationObserver;
-    private Exception savedException;
 
     private LogFileWriter logFileWriter;
 
@@ -49,8 +50,8 @@ public class NetworkLoggingHelper {
         this.telephonyHelper = telephonyHelper;
         pingObserver = new LoggingPingObserver();
         netInfoObserver = new NetworkInfo();
+        locationObserver = new LocationObserver();
         currentLoggingItem = new LoggingItem();
-
     }
 
     public Observer getPingObserver() {
@@ -95,17 +96,10 @@ public class NetworkLoggingHelper {
                             // loggingItem.setAccessNetworkType(??);
 
                             // Capture historical net usage stats
-                            long period = loggingItem.getPeriod();
-                                long txBytes = currentLoggingItem.getStartTxBytes() - loggingItem.getStartTxBytes();
-                                long rxBytes = currentLoggingItem.getStartRxBytes() - loggingItem.getStartRxBytes();
-                                Log.d(Constants.MODULE_NAME, "Get networkStats"
-                                        +": startTimeStamp="+loggingItem.getStartTs()
-                                        +", rxBytes="+rxBytes
-                                        +", txBytes="+txBytes
-                                        +", period="+period
-                                );
-                                loggingItem.setDownlinkBps(((double) rxBytes * 8) /((double)period / 1000)/(1024 * 1024));
-                                loggingItem.setUplinkBps(((double) txBytes * 8) / ((double)period / 1000)/(1024 * 1024));
+                            long endTxBytes = currentLoggingItem.getStartTxBytes();
+                            long endRxBytes = currentLoggingItem.getStartRxBytes();
+                            calculateMbps(loggingItem, endTxBytes, endRxBytes);
+                            calculateMedianLatency(loggingItem);
                             synchronized(me) {
                                 if ( logFileWriter == null ) {
                                     Log.d(Constants.MODULE_NAME, "Detected loggingTask run after stop at point 2");
@@ -148,6 +142,32 @@ public class NetworkLoggingHelper {
                 promise.reject(Constants.E_RUNTIME_EXCEPTION, "Unexpected exception when initializing netowrk logging task", e);
             }
         }
+    }
+
+    private void calculateMedianLatency(LoggingItem loggingItem) {
+        List<Double> latencies = loggingItem.getAccumulatedLatency();
+        if ( latencies.size() > 0 ) {
+            int middle = latencies.size()/2;
+            loggingItem.setLatencyMedian(latencies.get(middle));
+        }
+    }
+
+    private void calculateMbps(LoggingItem loggingItem, long endTxBytes, long endRxBytes) {
+        long period = loggingItem.getPeriod();
+        long txBytes = endTxBytes - loggingItem.getStartTxBytes();
+        long rxBytes = endRxBytes - loggingItem.getStartRxBytes();
+        Log.d(Constants.MODULE_NAME, "Get networkStats"
+                +": startTimeStamp="+loggingItem.getStartTs()
+                +", rxBytes="+rxBytes
+                +", txBytes="+txBytes
+                +", period="+period
+        );
+
+        double downlinkBps = ((double) rxBytes * 8) /((double)period / 1000)/(1024 * 1024);
+        loggingItem.setDownlinkBps(new BigDecimal(downlinkBps).setScale(2, RoundingMode.HALF_EVEN));
+
+        double uplinkBps = ((double) txBytes * 8) / ((double)period / 1000)/(1024 * 1024);
+        loggingItem.setUplinkBps(new BigDecimal(uplinkBps).setScale(2, RoundingMode.HALF_EVEN));
     }
 
     private synchronized LoggingItem switchLoggingItem(boolean ignorePrevious) {
@@ -278,11 +298,18 @@ public class NetworkLoggingHelper {
     }
 
     public class LocationObserver implements Observer {
+
         @Override
         public void update(Observable o, Object arg) {
-            ReadableMap map = (ReadableMap) arg;
-            // TODO implement
+            ReadableMap location = (ReadableMap) arg;
+            double latitude = location.getDouble("latitude");
+            double longitude = location.getDouble("longitude");
+            synchronized(NetworkLoggingHelper.this) {
+                currentLoggingItem.setLatitude(latitude);
+                currentLoggingItem.setLongitude(longitude);
+            }
         }
+
     }
 
 }

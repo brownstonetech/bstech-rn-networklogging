@@ -68,8 +68,8 @@ public class LogFileWriter {
         writer.value(loggingItem.getAccessNetworkType());
         writer.value(loggingItem.getNetworkType());
         writeCellIdentityLte(loggingItem.getCellIdentityLte());
-        writeCellIdentityNr(loggingItem.getCellIdentityNr());
         writeCellSignalStrengthLte(loggingItem.getCellSignalStrengthLte());
+        writeCellIdentityNr(loggingItem.getCellIdentityNr());
         writeCellSignalStrengthNr(loggingItem.getCellSignalStrengthNr());
         writeThroughoutput(loggingItem);
         writeLatency(loggingItem);
@@ -83,8 +83,8 @@ public class LogFileWriter {
         writer.value("Access Network Type");
         writer.value("Network Type");
         writeCellIdentityLteTitle();
-        writeCellIdentityNrTitle();
         writeCellSignalStrengthLteTitle();
+        writeCellIdentityNrTitle();
         writeCellSignalStrengthNrTitle();
         writeThroughoutputTitle();
         writeLatencyTitle();
@@ -145,13 +145,14 @@ public class LogFileWriter {
     private void writeCellSignalStrengthLte(CellSignalStrengthLte cellSignalStrengthLte) throws IOException {
         // Group separator
         writer.value("|");
+        Log.d(Constants.MODULE_NAME, "Writing cellSignalStrengthLte "+cellSignalStrengthLte);
+        writer.value(CellInfoUtils.getCqi(cellSignalStrengthLte));
+        writer.value(CellInfoUtils.getRsrp(cellSignalStrengthLte));
+        writer.value(CellInfoUtils.getRsrq(cellSignalStrengthLte));
+        writer.value(CellInfoUtils.getRssi(cellSignalStrengthLte));
+        writer.value(CellInfoUtils.getRssnr(cellSignalStrengthLte));
+        writer.value(CellInfoUtils.getTimingAdvance(cellSignalStrengthLte));
 
-        writer.value(cellSignalStrengthLte == null||android.os.Build.VERSION.SDK_INT < 26?null:CellInfoUtils.filterUnavailable(cellSignalStrengthLte.getCqi()));
-        writer.value(cellSignalStrengthLte == null||android.os.Build.VERSION.SDK_INT < 26?null:CellInfoUtils.filterUnavailable(cellSignalStrengthLte.getRsrp()));
-        writer.value(cellSignalStrengthLte == null||android.os.Build.VERSION.SDK_INT < 26?null:CellInfoUtils.filterUnavailable(cellSignalStrengthLte.getRsrq()));
-        writer.value(cellSignalStrengthLte == null||android.os.Build.VERSION.SDK_INT < 29?null:CellInfoUtils.filterUnavailable(cellSignalStrengthLte.getRssi()));
-        writer.value(cellSignalStrengthLte == null||android.os.Build.VERSION.SDK_INT < 26?null:CellInfoUtils.filterUnavailable(cellSignalStrengthLte.getRssnr()));
-        writer.value(cellSignalStrengthLte == null?null:CellInfoUtils.filterUnavailable(cellSignalStrengthLte.getTimingAdvance()));
     }
 
     private void writeCellSignalStrengthLteTitle() throws IOException {
@@ -207,7 +208,7 @@ public class LogFileWriter {
     }
 
     private void writeLatencyTitle() throws IOException {
-        writer.value("Latency");
+        writer.value("");
         writer.value("best");
         writer.value("median");
         writer.value("worst");

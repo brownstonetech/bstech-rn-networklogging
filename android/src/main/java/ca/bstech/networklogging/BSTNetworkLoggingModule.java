@@ -107,6 +107,17 @@ public class BSTNetworkLoggingModule extends ReactContextBaseJavaModule implemen
     }
 
     @ReactMethod
+    public void feedLocationAsync(ReadableMap location, Promise promise) {
+        try {
+            networkLoggingHelper.getLocationObserver().update(null, location);
+            promise.resolve(null);
+        } catch(Exception e) {
+            Log.e(Constants.MODULE_NAME, "Unexpected exception in feedLocationAsync", e);
+            promise.reject(Constants.E_RUNTIME_EXCEPTION, e);
+        }
+    }
+
+    @ReactMethod
     public void hasTelephonyFeatureAsync(Promise promise) {
         try {
             boolean hasTelephonyFeature = getReactApplicationContext().getPackageManager()
