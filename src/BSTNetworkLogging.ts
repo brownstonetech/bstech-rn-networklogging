@@ -133,7 +133,7 @@ export async function hasTelephonyFeatureAsync(): Promise<boolean> {
   return await BSTNetworkLoggingModule.hasTelephonyFeatureAsync();
 }
 
-export async function startNetworkLoggingAsync(): Promise<String> {
+export async function startNetworkLoggingAsync(): Promise<string> {
   return await BSTNetworkLoggingModule.startNetworkLoggingAsync();
 }
 
