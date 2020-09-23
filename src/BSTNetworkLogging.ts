@@ -90,9 +90,9 @@ export type NetworkInfoEvent = {
 };
 
 export type PhoneInfo = {
-  imsi: String;
-  imei: String;
-  model: String;
+  imsi?: string;
+  imei?: string;
+  model: string;
 };
 
 export type RequestPermissionOptions = {
@@ -133,8 +133,8 @@ export async function hasTelephonyFeatureAsync(): Promise<boolean> {
   return await BSTNetworkLoggingModule.hasTelephonyFeatureAsync();
 }
 
-export async function startNetworkLoggingAsync(): Promise<string> {
-  return await BSTNetworkLoggingModule.startNetworkLoggingAsync();
+export async function startNetworkLoggingAsync(options: {imsi: string; loggingInterval?: number}): Promise<string> {
+  return await BSTNetworkLoggingModule.startNetworkLoggingAsync(options);
 }
 
 export async function stopNetworkLoggingAsync(): Promise<void> {
@@ -155,4 +155,11 @@ export async function initializeAsync(): Promise<void> {
 
 export async function feedLocationAsync(location: Coordination): Promise<void> {
   await BSTNetworkLoggingModule.feedLocationAsync(location);
+}
+
+export async function generateTestFileAsync(fileName: string, sizeKB: number): Promise<string> {
+  return await BSTNetworkLoggingModule.generateTestFileAsync({
+    fileName: fileName,
+    sizeKB: sizeKB,
+  });
 }

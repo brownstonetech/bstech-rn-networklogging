@@ -22,6 +22,7 @@ import android.util.Log;
 import ca.bstech.networklogging.logging.NetworkLoggingHelper;
 import ca.bstech.networklogging.networkinfo.TelephonyHelper;
 import ca.bstech.networklogging.ping.PingHelper;
+import ca.bstech.networklogging.utils.FileGenerator;
 
 public class BSTNetworkLoggingModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
 
@@ -30,6 +31,7 @@ public class BSTNetworkLoggingModule extends ReactContextBaseJavaModule implemen
     private TelephonyHelper telephonyHelper;
     private PingHelper pingHelper;
     private NetworkLoggingHelper networkLoggingHelper;
+    private FileGenerator fileGenerator;
 
     public BSTNetworkLoggingModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -37,6 +39,7 @@ public class BSTNetworkLoggingModule extends ReactContextBaseJavaModule implemen
         pingHelper = new PingHelper(reactContext);
         Observer pingEventEmitter = new PingEventEmitter(reactContext, Constants.PING_EVENT);
         pingHelper.getObservable().addObserver(pingEventEmitter);
+        fileGenerator = new FileGenerator(reactContext);
     }
 
     @ReactMethod
@@ -147,12 +150,14 @@ public class BSTNetworkLoggingModule extends ReactContextBaseJavaModule implemen
     }
 
     @ReactMethod
-    public void startNetworkLoggingAsync(final Promise promise) {
+    public void startNetworkLoggingAsync(ReadableMap map, final Promise promise) {
         if ( networkLoggingHelper == null ) {
             promise.reject(Constants.E_INVALID_PARAM, "networkLogging module haven't been initialized yet.");
             return;
         }
-        networkLoggingHelper.startNetworkLoggingAsync(1000, promise);
+        String imsi = map.getString("imsi");
+        int loggingInterval = map.hasKey("loggingInterval")? map.getInt("loggingInterval"):1000;
+        networkLoggingHelper.startNetworkLoggingAsync(imsi,loggingInterval, promise);
     }
 
     @ReactMethod
@@ -186,6 +191,19 @@ public class BSTNetworkLoggingModule extends ReactContextBaseJavaModule implemen
             }
 
             promise.resolve(true);
+        } catch (Exception e) {
+            Log.w(Constants.MODULE_NAME, "Error requesting permissions: " + e.getMessage(), e);
+            promise.reject(Constants.E_RUNTIME_EXCEPTION, e);
+        }
+    }
+
+    @ReactMethod
+    public void generateTestFileAsync(final ReadableMap map, final Promise promise) {
+        try {
+            String fileName = map.getString("fileName");
+            int sizeKB = map.getInt("sizeKB");
+            String filePath = fileGenerator.generateTestFile(fileName, sizeKB);
+            promise.resolve(filePath);
         } catch (Exception e) {
             Log.w(Constants.MODULE_NAME, "Error requesting permissions: " + e.getMessage(), e);
             promise.reject(Constants.E_RUNTIME_EXCEPTION, e);

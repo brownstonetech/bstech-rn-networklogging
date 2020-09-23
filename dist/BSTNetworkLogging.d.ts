@@ -71,9 +71,9 @@ export declare type NetworkInfoEvent = {
     nr: CellInfoNr[];
 };
 export declare type PhoneInfo = {
-    imsi: String;
-    imei: String;
-    model: String;
+    imsi?: string;
+    imei?: string;
+    model: string;
 };
 export declare type RequestPermissionOptions = {
     requestPermission: boolean;
@@ -93,9 +93,13 @@ export declare function startPingAsync(domainName: string, params?: PingParams, 
 }): Promise<void>;
 export declare function stopPingAsync(): Promise<void>;
 export declare function hasTelephonyFeatureAsync(): Promise<boolean>;
-export declare function startNetworkLoggingAsync(): Promise<string>;
+export declare function startNetworkLoggingAsync(options: {
+    imsi: string;
+    loggingInterval?: number;
+}): Promise<string>;
 export declare function stopNetworkLoggingAsync(): Promise<void>;
 export declare function getPhoneInfoAsync(): Promise<PhoneInfo>;
 export declare function requestPermissionsAsync(options?: RequestPermissionOptions): Promise<boolean>;
 export declare function initializeAsync(): Promise<void>;
 export declare function feedLocationAsync(location: Coordination): Promise<void>;
+export declare function generateTestFileAsync(fileName: string, sizeKB: number): Promise<string>;

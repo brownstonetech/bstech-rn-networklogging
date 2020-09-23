@@ -44,6 +44,8 @@ public class NetworkLoggingHelper {
     private Timer loggingIntervalTimer = new Timer();
     private TimerTask loggingTask;
     private Promise savedPromise;
+    private String imsi;
+    private String imei;
 
     public NetworkLoggingHelper(ReactApplicationContext reactContext, TelephonyHelper telephonyHelper) {
         this.reactContext = reactContext;
@@ -66,7 +68,7 @@ public class NetworkLoggingHelper {
         return locationObserver;
     }
 
-    public void startNetworkLoggingAsync(long loggingInveral, final Promise promise) {
+    public void startNetworkLoggingAsync(String imsi, long loggingInveral, final Promise promise) {
         final NetworkLoggingHelper me = this;
         synchronized (this) {
             if (loggingTask != null) {
@@ -129,6 +131,7 @@ public class NetworkLoggingHelper {
 
                 };
                 loggingIntervalTimer.purge();
+                currentLoggingItem.setImsi(imsi);
                 // switch once when new task start
                 switchLoggingItem(true);
                 loggingIntervalTimer.scheduleAtFixedRate(loggingTask, loggingInveral, loggingInveral);
