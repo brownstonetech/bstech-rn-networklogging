@@ -77,6 +77,8 @@ public class NetworkLoggingHelper {
             try {
                 File file = new File(reactContext.getCacheDir(), "networklogging.json");
                 logFileWriter = new LogFileWriter(file);
+                final int[] counting = new int[1];
+                counting[0]=0;
                 loggingTask = new TimerTask() {
 
                     @Override
@@ -125,6 +127,14 @@ public class NetworkLoggingHelper {
                                 } catch (Exception e1) {
                                     Log.e(Constants.MODULE_NAME, "Unexpected exception when stopNetworkLogging", e);
                                 }
+                            }
+                        }
+                        counting[0]=(counting[0]+1)%10;
+                        if (counting[0]==0) {
+                            try {
+                                telephonyHelper.requestCellInfoUpdate();
+                            } catch (Exception e) {
+                                Log.e(Constants.MODULE_NAME, "Unexpected exception when requestCellInfoUpdate", e);
                             }
                         }
                     }

@@ -73,12 +73,18 @@ public class TelephonyHelper extends Observable
         int events = PhoneStateListener.LISTEN_CELL_INFO;
         Log.d(Constants.MODULE_NAME, "Register telephonyPhoneStateListener with events "+events);
         telephonyManager.listen(telephonyPhoneStateListener, events);
+        requestCellInfoUpdate();
+        getCellInfo();
+    }
+
+    public void requestCellInfoUpdate() throws SecurityException {
         if (android.os.Build.VERSION.SDK_INT >= 29 ) {
             Log.d(Constants.MODULE_NAME, "Requested cellInfoUpdate");
             telephonyManager.requestCellInfoUpdate(AsyncTask.THREAD_POOL_EXECUTOR,
                     new CellInfoCallback(this));
+        } else {
+            telephonyManager.getAllCellInfo();
         }
-        getCellInfo();
     }
 
     @Override

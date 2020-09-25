@@ -13,14 +13,15 @@ public class CellInfos {
     public void addCellInfoLte(CellInfoLte cellInfoLte) {
         if ( cellInfoLteList == null ) {
             ArrayList<CellInfoLte> temp = new ArrayList<>();
-            temp.toString();
             cellInfoLteList = temp;
         }
         cellInfoLteList.add(cellInfoLte);
     }
 
     public void addCellInfoNr(CellInfoNr cellInfoNr) {
-        if ( cellInfoNrList == null ) cellInfoNrList = new ArrayList<>();
+        if ( cellInfoNrList == null ) {
+            cellInfoNrList = new ArrayList<>();
+        }
         cellInfoNrList.add(cellInfoNr);
     }
 
