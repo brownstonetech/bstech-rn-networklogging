@@ -1,13 +1,15 @@
 package ca.bstech.networklogging.logging;
 
-import android.telephony.CellIdentityLte;
-import android.telephony.CellIdentityNr;
-import android.telephony.CellSignalStrengthLte;
-import android.telephony.CellSignalStrengthNr;
+//import android.telephony.CellIdentityLte;
+//import android.telephony.CellIdentityNr;
+//import android.telephony.CellSignalStrengthLte;
+//import android.telephony.CellSignalStrengthNr;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
+import ca.bstech.networklogging.networkinfo.CellInfos;
 
 public class LoggingItem {
 
@@ -22,10 +24,11 @@ public class LoggingItem {
     // TODO how to get this?
     private Integer accessNetworkType;
 
-    private CellIdentityLte cellIdentityLte;
-    private CellSignalStrengthLte cellSignalStrengthLte;
-    private CellIdentityNr cellIdentityNr;
-    private CellSignalStrengthNr cellSignalStrengthNr;
+    private CellInfos cellInfos;
+//    CellIdentityLte cellIdentityLte;
+//    private CellSignalStrengthLte cellSignalStrengthLte;
+//    private CellIdentityNr cellIdentityNr;
+//    private CellSignalStrengthNr cellSignalStrengthNr;
 
     //    private NetworkStats.Bucket dataUsage;
     private long startRxBytes;
@@ -54,8 +57,8 @@ public class LoggingItem {
         this.longitude = previous.getLongitude();
         this.networkType = previous.getNetworkType();
         this.accessNetworkType = previous.getAccessNetworkType();
-        this.cellIdentityLte = previous.getCellIdentityLte();
-        this.cellIdentityNr = previous.getCellIdentityNr();
+        this.cellInfos = previous.getCellInfos();
+//        this.cellIdentityNr = previous.getCellIdentityNr();
         // Don't carry over
         this.latencyMin = null;
         this.latencyMax = null;
@@ -118,37 +121,44 @@ public class LoggingItem {
         this.accessNetworkType = accessNetworkType;
     }
 
-    public CellIdentityLte getCellIdentityLte() {
-        return cellIdentityLte;
+    public CellInfos getCellInfos() {
+        return cellInfos;
     }
 
-    public void setCellIdentityLte(CellIdentityLte cellIdentityLte) {
-        this.cellIdentityLte = cellIdentityLte;
+    public void setCellInfos(CellInfos cellInfos) {
+        this.cellInfos = cellInfos;
     }
-
-    public CellIdentityNr getCellIdentityNr() {
-        return cellIdentityNr;
-    }
-
-    public void setCellIdentityNr(CellIdentityNr cellIdentityNr) {
-        this.cellIdentityNr = cellIdentityNr;
-    }
-
-    public CellSignalStrengthLte getCellSignalStrengthLte() {
-        return cellSignalStrengthLte;
-    }
-
-    public void setCellSignalStrengthLte(CellSignalStrengthLte cellSignalStrengthLte) {
-        this.cellSignalStrengthLte = cellSignalStrengthLte;
-    }
-
-    public CellSignalStrengthNr getCellSignalStrengthNr() {
-        return cellSignalStrengthNr;
-    }
-
-    public void setCellSignalStrengthNr(CellSignalStrengthNr cellSignalStrengthNr) {
-        this.cellSignalStrengthNr = cellSignalStrengthNr;
-    }
+//    public CellIdentityLte getCellIdentityLte() {
+//        return cellIdentityLte;
+//    }
+//
+//    public void setCellIdentityLte(CellIdentityLte cellIdentityLte) {
+//        this.cellIdentityLte = cellIdentityLte;
+//    }
+//
+//    public CellIdentityNr getCellIdentityNr() {
+//        return cellIdentityNr;
+//    }
+//
+//    public void setCellIdentityNr(CellIdentityNr cellIdentityNr) {
+//        this.cellIdentityNr = cellIdentityNr;
+//    }
+//
+//    public CellSignalStrengthLte getCellSignalStrengthLte() {
+//        return cellSignalStrengthLte;
+//    }
+//
+//    public void setCellSignalStrengthLte(CellSignalStrengthLte cellSignalStrengthLte) {
+//        this.cellSignalStrengthLte = cellSignalStrengthLte;
+//    }
+//
+//    public CellSignalStrengthNr getCellSignalStrengthNr() {
+//        return cellSignalStrengthNr;
+//    }
+//
+//    public void setCellSignalStrengthNr(CellSignalStrengthNr cellSignalStrengthNr) {
+//        this.cellSignalStrengthNr = cellSignalStrengthNr;
+//    }
 
     public BigDecimal getDownlinkBps() {
         return downlinkBps;

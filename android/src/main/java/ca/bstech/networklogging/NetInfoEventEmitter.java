@@ -86,12 +86,12 @@ public class NetInfoEventEmitter implements Observer {
         WritableMap ret = Arguments.createMap();
         // TODO handle bands
         CellInfoUtils.safeAddToMap(ret, "bandwidth", CellInfoUtils.getBandwidth(cellIdentity));
-        CellInfoUtils.safeAddToMap(ret, "ci", cellIdentity.getCi());
+        CellInfoUtils.safeAddToMap(ret, "ci", CellInfoUtils.getCi(cellIdentity));
         CellInfoUtils.safeAddToMap(ret, "earfcn", CellInfoUtils.getEarfcn(cellIdentity));
         CellInfoUtils.safeAddToMap(ret, "mccString", CellInfoUtils.getMccString(cellIdentity));
         CellInfoUtils.safeAddToMap(ret, "mncString", CellInfoUtils.getMncString(cellIdentity));
-        CellInfoUtils.safeAddToMap(ret, "pci", CellInfoUtils.filterUnavailable(cellIdentity.getPci()));
-        CellInfoUtils.safeAddToMap(ret, "tac", CellInfoUtils.filterUnavailable(cellIdentity.getTac()));
+        CellInfoUtils.safeAddToMap(ret, "pci", CellInfoUtils.getPci(cellIdentity));
+        CellInfoUtils.safeAddToMap(ret, "tac", CellInfoUtils.getTac(cellIdentity));
         return ret;
     }
 
@@ -133,13 +133,13 @@ public class NetInfoEventEmitter implements Observer {
     private WritableMap processCellSignalStrength(CellSignalStrengthNr cellSignalStrength) {
         if ( cellSignalStrength == null ) return null;
         WritableMap ret = Arguments.createMap();
-        CellInfoUtils.safeAddToMap(ret, "csiRsrp", cellSignalStrength.getCsiRsrp());
-        CellInfoUtils.safeAddToMap(ret, "csiRsrq", cellSignalStrength.getCsiRsrq());
-        CellInfoUtils.safeAddToMap(ret, "csiSinr", cellSignalStrength.getCsiSinr());
-        CellInfoUtils.safeAddToMap(ret, "csiSinr", cellSignalStrength.getCsiSinr());
-        CellInfoUtils.safeAddToMap(ret, "ssRsrp", cellSignalStrength.getSsRsrp());
-        CellInfoUtils.safeAddToMap(ret, "ssRsrq", cellSignalStrength.getSsRsrq());
-        CellInfoUtils.safeAddToMap(ret, "ssSinr", cellSignalStrength.getSsSinr());
+        CellInfoUtils.safeAddToMap(ret, "csiRsrp", CellInfoUtils.getCsiRsrp(cellSignalStrength));
+        CellInfoUtils.safeAddToMap(ret, "csiRsrq", CellInfoUtils.getCsiRsrq(cellSignalStrength));
+        CellInfoUtils.safeAddToMap(ret, "csiSinr", CellInfoUtils.getCsiSinr(cellSignalStrength));
+        CellInfoUtils.safeAddToMap(ret, "csiSinr", CellInfoUtils.getCsiSinr(cellSignalStrength));
+        CellInfoUtils.safeAddToMap(ret, "ssRsrp", CellInfoUtils.getSsRsrp(cellSignalStrength));
+        CellInfoUtils.safeAddToMap(ret, "ssRsrq", CellInfoUtils.getSsRsrq(cellSignalStrength));
+        CellInfoUtils.safeAddToMap(ret, "ssSinr", CellInfoUtils.getSsSinr(cellSignalStrength));
         return ret;
     }
 

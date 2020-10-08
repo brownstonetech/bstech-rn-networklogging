@@ -73,7 +73,6 @@ public class TelephonyHelper extends Observable
         int events = PhoneStateListener.LISTEN_CELL_INFO;
         Log.d(Constants.MODULE_NAME, "Register telephonyPhoneStateListener with events "+events);
         telephonyManager.listen(telephonyPhoneStateListener, events);
-        requestCellInfoUpdate();
         getCellInfo();
     }
 

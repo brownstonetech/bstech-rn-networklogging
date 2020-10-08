@@ -1,10 +1,10 @@
 package ca.bstech.networklogging.logging;
 
 import android.net.TrafficStats;
-import android.telephony.CellIdentityNr;
-import android.telephony.CellInfoLte;
-import android.telephony.CellInfoNr;
-import android.telephony.CellSignalStrengthNr;
+//import android.telephony.CellIdentityNr;
+//import android.telephony.CellInfoLte;
+//import android.telephony.CellInfoNr;
+//import android.telephony.CellSignalStrengthNr;
 import android.util.Log;
 
 import com.facebook.react.bridge.Promise;
@@ -152,7 +152,7 @@ public class NetworkLoggingHelper {
                     promise.reject(Constants.E_LOGFILE_CREATE, "Cannot create logfile for writing", e);
                 }
                 Log.e(Constants.MODULE_NAME, "Unexpected exception when initializing network logging task ", e);
-                promise.reject(Constants.E_RUNTIME_EXCEPTION, "Unexpected exception when initializing netowrk logging task", e);
+                promise.reject(Constants.E_RUNTIME_EXCEPTION, "Unexpected exception when initializing network logging task", e);
             }
         }
     }
@@ -283,28 +283,29 @@ public class NetworkLoggingHelper {
                 Log.d(Constants.MODULE_NAME, "Processing network info for log file");
                 if (currentLoggingItem == null) return;
                 CellInfos cellInfos = (CellInfos)arg;
-                List<CellInfoLte> cellInfoLteList = cellInfos.getCellInfoLte();
-                if ( cellInfoLteList != null && cellInfoLteList.size()>0 ) {
-                    if (cellInfoLteList.size()>1 ) {
-                        Log.w(Constants.MODULE_NAME, "Find more than one cellInfoLTE items, will take the first one");
-                    }
-                    // Just return the first one
-                    CellInfoLte cellInfoLte = cellInfoLteList.get(0);
-                    currentLoggingItem.setCellIdentityLte(cellInfoLte.getCellIdentity());
-                    currentLoggingItem.setCellSignalStrengthLte(cellInfoLte.getCellSignalStrength());
-                }
-                List<CellInfoNr> cellInfoNrList = cellInfos.getCellInfoNr();
-                if ( cellInfoNrList != null && cellInfoNrList.size()>0 ) {
-                    if (cellInfoNrList.size() >1 ) {
-                        Log.w(Constants.MODULE_NAME, "Find more than one cellInfoNr items, will take the first one");
-                    }
-                    // Just return the first one
-                    CellInfoNr cellInfoNr = cellInfoNrList.get(0);
-                    if (android.os.Build.VERSION.SDK_INT >= 29) {
-                        currentLoggingItem.setCellIdentityNr((CellIdentityNr) cellInfoNr.getCellIdentity());
-                        currentLoggingItem.setCellSignalStrengthNr((CellSignalStrengthNr) cellInfoNr.getCellSignalStrength());
-                    }
-                }
+                currentLoggingItem.setCellInfos(cellInfos);
+//                List<CellInfoLte> cellInfoLteList = cellInfos.getCellInfoLte();
+//                if ( cellInfoLteList != null && cellInfoLteList.size()>0 ) {
+//                    if (cellInfoLteList.size()>1 ) {
+//                        Log.w(Constants.MODULE_NAME, "Find more than one cellInfoLTE items, will take the first one");
+//                    }
+//                    // Just return the first one
+//                    CellInfoLte cellInfoLte = cellInfoLteList.get(0);
+//                    currentLoggingItem.setCellIdentityLte(cellInfoLte.getCellIdentity());
+//                    currentLoggingItem.setCellSignalStrengthLte(cellInfoLte.getCellSignalStrength());
+//                }
+//                List<CellInfoNr> cellInfoNrList = cellInfos.getCellInfoNr();
+//                if ( cellInfoNrList != null && cellInfoNrList.size()>0 ) {
+//                    if (cellInfoNrList.size() >1 ) {
+//                        Log.w(Constants.MODULE_NAME, "Find more than one cellInfoNr items, will take the first one");
+//                    }
+//                    // Just return the first one
+//                    CellInfoNr cellInfoNr = cellInfoNrList.get(0);
+//                    if (android.os.Build.VERSION.SDK_INT >= 29) {
+//                        currentLoggingItem.setCellIdentityNr((CellIdentityNr) cellInfoNr.getCellIdentity());
+//                        currentLoggingItem.setCellSignalStrengthNr((CellSignalStrengthNr) cellInfoNr.getCellSignalStrength());
+//                    }
+//                }
                 Log.d(Constants.MODULE_NAME, "Processed network info for log file");
             }
         }

@@ -1,11 +1,17 @@
 package ca.bstech.networklogging.logging;
 
+import android.os.Build;
 import android.telephony.CellIdentityLte;
 import android.telephony.CellIdentityNr;
+import android.telephony.CellInfo;
+import android.telephony.CellInfoLte;
+import android.telephony.CellInfoNr;
 import android.telephony.CellSignalStrengthLte;
 import android.telephony.CellSignalStrengthNr;
 import android.util.JsonWriter;
 import android.util.Log;
+
+import androidx.annotation.RequiresApi;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -14,9 +20,11 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import ca.bstech.networklogging.Constants;
 import ca.bstech.networklogging.networkinfo.CellInfoUtils;
+import ca.bstech.networklogging.networkinfo.CellInfos;
 
 public class LogFileWriter {
 
@@ -67,10 +75,10 @@ public class LogFileWriter {
         writer.value(loggingItem.getLatitude());
         writer.value(loggingItem.getAccessNetworkType());
         writer.value(loggingItem.getNetworkType());
-        writeCellIdentityLte(loggingItem.getCellIdentityLte());
-        writeCellSignalStrengthLte(loggingItem.getCellSignalStrengthLte());
-        writeCellIdentityNr(loggingItem.getCellIdentityNr());
-        writeCellSignalStrengthNr(loggingItem.getCellSignalStrengthNr());
+        writeCellIdentityLte(loggingItem.getCellInfos());
+        writeCellSignalStrengthLte(loggingItem.getCellInfos());
+        writeCellIdentityNr(loggingItem.getCellInfos());
+        writeCellSignalStrengthNr(loggingItem.getCellInfos());
         writeThroughoutput(loggingItem);
         writeLatency(loggingItem);
     }
@@ -90,18 +98,19 @@ public class LogFileWriter {
         writeLatencyTitle();
     }
 
-    private void writeCellIdentityLte(CellIdentityLte cellIdentityLte) throws IOException {
+    private void writeCellIdentityLte(CellInfos cellInfos) throws IOException {
         // Group separator
         writer.value("|");
         // TODO figure where bands comes from
         // writer.value(cellIdentityLte==null?null:cellIdentityLte.getBands());
-        writer.value(CellInfoUtils.getBandwidth(cellIdentityLte));
-        writer.value(cellIdentityLte==null?null:CellInfoUtils.filterUnavailable(cellIdentityLte.getCi()));
-        writer.value(CellInfoUtils.getEarfcn(cellIdentityLte));
-        writer.value(CellInfoUtils.getMccString(cellIdentityLte));
-        writer.value(CellInfoUtils.getMncString(cellIdentityLte));
-        writer.value(cellIdentityLte==null?null:CellInfoUtils.filterUnavailable(cellIdentityLte.getPci()));
-        writer.value(cellIdentityLte==null?null:CellInfoUtils.filterUnavailable(cellIdentityLte.getTac()));
+        List<CellInfoLte> cellIdentityLte = cellInfos == null? null:cellInfos.getCellInfoLte();
+        writer.value(CellInfoUtils.getBandwidthLte(cellIdentityLte));
+        writer.value(CellInfoUtils.getCiLte(cellIdentityLte));
+        writer.value(CellInfoUtils.getEarfcnLte(cellIdentityLte));
+        writer.value(CellInfoUtils.getMccStringLte(cellIdentityLte));
+        writer.value(CellInfoUtils.getMncStringLte(cellIdentityLte));
+        writer.value(CellInfoUtils.getPciLte(cellIdentityLte));
+        writer.value(CellInfoUtils.getTacLte(cellIdentityLte));
     }
 
     private void writeCellIdentityLteTitle() throws IOException {
@@ -117,17 +126,18 @@ public class LogFileWriter {
         writer.value("LTE TAC");
     }
 
-    private void writeCellIdentityNr(CellIdentityNr cellIdentityNr) throws IOException {
+    private void writeCellIdentityNr(CellInfos cellInfos) throws IOException {
         // Group separator
         writer.value("|");
+        List<CellInfoNr> cellIdentityNrList = cellInfos == null? null: cellInfos.getCellInfoNr();
         // TODO implement
         // writer.value(cellIdentityNr == null? null: cellIdentityNr.getBands());
-        writer.value(cellIdentityNr == null||android.os.Build.VERSION.SDK_INT < 29? null: cellIdentityNr.getMccString());
-        writer.value(cellIdentityNr == null||android.os.Build.VERSION.SDK_INT < 29? null: cellIdentityNr.getMncString());
-        writer.value(cellIdentityNr == null||android.os.Build.VERSION.SDK_INT < 29? null: CellInfoUtils.filterUnavailable(cellIdentityNr.getNci()));
-        writer.value(cellIdentityNr == null||android.os.Build.VERSION.SDK_INT < 29? null: CellInfoUtils.filterUnavailable(cellIdentityNr.getNrarfcn()));
-        writer.value(cellIdentityNr == null||android.os.Build.VERSION.SDK_INT < 29? null: CellInfoUtils.filterUnavailable(cellIdentityNr.getPci()));
-        writer.value(cellIdentityNr == null||android.os.Build.VERSION.SDK_INT < 29? null: CellInfoUtils.filterUnavailable(cellIdentityNr.getTac()));
+        writer.value(CellInfoUtils.getMccStringNr(cellIdentityNrList));
+        writer.value(CellInfoUtils.getMncStringNr(cellIdentityNrList));
+        writer.value(CellInfoUtils.getNciNr(cellIdentityNrList));
+        writer.value(CellInfoUtils.getNrarfcnNr(cellIdentityNrList));
+        writer.value(CellInfoUtils.getPciNr(cellIdentityNrList));
+        writer.value(CellInfoUtils.getTacNr(cellIdentityNrList));
     }
 
     private void writeCellIdentityNrTitle() throws IOException {
@@ -142,16 +152,17 @@ public class LogFileWriter {
         writer.value("5G TAC");
     }
 
-    private void writeCellSignalStrengthLte(CellSignalStrengthLte cellSignalStrengthLte) throws IOException {
+    private void writeCellSignalStrengthLte(CellInfos cellInfos) throws IOException {
         // Group separator
         writer.value("|");
-        Log.d(Constants.MODULE_NAME, "Writing cellSignalStrengthLte "+cellSignalStrengthLte);
-        writer.value(CellInfoUtils.getCqi(cellSignalStrengthLte));
-        writer.value(CellInfoUtils.getRsrp(cellSignalStrengthLte));
-        writer.value(CellInfoUtils.getRsrq(cellSignalStrengthLte));
-        writer.value(CellInfoUtils.getRssi(cellSignalStrengthLte));
-        writer.value(CellInfoUtils.getRssnr(cellSignalStrengthLte));
-        writer.value(CellInfoUtils.getTimingAdvance(cellSignalStrengthLte));
+        List<CellInfoLte> cellIdentityLte = cellInfos == null? null:cellInfos.getCellInfoLte();
+        Log.d(Constants.MODULE_NAME, "Writing cellSignalStrengthLte "+cellIdentityLte);
+        writer.value(CellInfoUtils.getCqiLte(cellIdentityLte));
+        writer.value(CellInfoUtils.getRsrpLte(cellIdentityLte));
+        writer.value(CellInfoUtils.getRsrqLte(cellIdentityLte));
+        writer.value(CellInfoUtils.getRssiLte(cellIdentityLte));
+        writer.value(CellInfoUtils.getRssnrLte(cellIdentityLte));
+        writer.value(CellInfoUtils.getTimingAdvanceLte(cellIdentityLte));
 
     }
 
@@ -166,15 +177,15 @@ public class LogFileWriter {
         writer.value("LTE TA");
     }
 
-    private void writeCellSignalStrengthNr(CellSignalStrengthNr cellSignalStrengthNr) throws IOException {
+    private void writeCellSignalStrengthNr(CellInfos cellInfos) throws IOException {
         writer.value("|");
-
-        writer.value(cellSignalStrengthNr == null||android.os.Build.VERSION.SDK_INT < 29?null:CellInfoUtils.filterUnavailable(cellSignalStrengthNr.getCsiRsrp()));
-        writer.value(cellSignalStrengthNr == null||android.os.Build.VERSION.SDK_INT < 29?null:CellInfoUtils.filterUnavailable(cellSignalStrengthNr.getCsiRsrq()));
-        writer.value(cellSignalStrengthNr == null||android.os.Build.VERSION.SDK_INT < 29?null:CellInfoUtils.filterUnavailable(cellSignalStrengthNr.getCsiSinr()));
-        writer.value(cellSignalStrengthNr == null||android.os.Build.VERSION.SDK_INT < 29?null:CellInfoUtils.filterUnavailable(cellSignalStrengthNr.getSsRsrp()));
-        writer.value(cellSignalStrengthNr == null||android.os.Build.VERSION.SDK_INT < 29?null:CellInfoUtils.filterUnavailable(cellSignalStrengthNr.getSsRsrq()));
-        writer.value(cellSignalStrengthNr == null||android.os.Build.VERSION.SDK_INT < 29?null:CellInfoUtils.filterUnavailable(cellSignalStrengthNr.getSsSinr()));
+        List<CellInfoNr> cellInfoNrList = cellInfos == null? null:cellInfos.getCellInfoNr();
+        writer.value(CellInfoUtils.getCsiRsrp(cellInfoNrList));
+        writer.value(CellInfoUtils.getCsiRsrq(cellInfoNrList));
+        writer.value(CellInfoUtils.getCsiSinr(cellInfoNrList));
+        writer.value(CellInfoUtils.getSsRsrp(cellInfoNrList));
+        writer.value(CellInfoUtils.getSsRsrq(cellInfoNrList));
+        writer.value(CellInfoUtils.getSsSinr(cellInfoNrList));
     }
 
     private void writeCellSignalStrengthNrTitle() throws IOException {

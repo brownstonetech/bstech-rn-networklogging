@@ -42,7 +42,7 @@ public class PingHelper {
         return pingResultParser;
     };
 
-    public void startPingAsync(final String domainName, ReadableMap params, ReadableMap pingOptions) throws ApplicationException {
+    public void startPingAsync(final String domainName, ReadableMap params, ReadableMap pingOptions, final Promise promise) throws ApplicationException {
         try {
             if (domainName == null || domainName.length() == 0) {
                 throw new IllegalArgumentException("domainName");
@@ -69,6 +69,7 @@ public class PingHelper {
                         Log.d(Constants.MODULE_NAME, "Running ping command "+ domainName+" for "+durationSeconds+" seconds");
                         ping(domainName, options, durationSeconds,
                                 reportIntervalSeconds, pingResultParser);
+                        promise.resolve(null);
 //                        pingEventEmitter.emitStopMessage();
                     } catch (RuntimeException e) {
                         Log.e(Constants.MODULE_NAME, Constants.E_RUNTIME_EXCEPTION, e);
@@ -107,9 +108,9 @@ public class PingHelper {
             if (process == null) return;
             breakSignal = true;
         }
-        // waiting for grace stop
+        // waiting for 3 seconds grace stop
         long startTime = System.currentTimeMillis();
-        while (System.currentTimeMillis() - startTime < 5000) {
+        while (System.currentTimeMillis() - startTime < 3000) {
             try {
                 Thread.sleep(200);
             } catch (InterruptedException e) {
