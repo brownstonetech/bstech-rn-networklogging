@@ -54,8 +54,6 @@ public class TelephonyListener extends PhoneStateListener {
 
     public interface PhoneCallStateUpdate {
         void phoneCellInfoUpdated(List<CellInfo> cellInfo);
-//        void phoneCellLocationUpdated(CellLocation location);
-//        void phoneSignalStrengthsUpdated(SignalStrength signalStrength);
     }
 
 }

@@ -284,28 +284,6 @@ public class NetworkLoggingHelper {
                 if (currentLoggingItem == null) return;
                 CellInfos cellInfos = (CellInfos)arg;
                 currentLoggingItem.setCellInfos(cellInfos);
-//                List<CellInfoLte> cellInfoLteList = cellInfos.getCellInfoLte();
-//                if ( cellInfoLteList != null && cellInfoLteList.size()>0 ) {
-//                    if (cellInfoLteList.size()>1 ) {
-//                        Log.w(Constants.MODULE_NAME, "Find more than one cellInfoLTE items, will take the first one");
-//                    }
-//                    // Just return the first one
-//                    CellInfoLte cellInfoLte = cellInfoLteList.get(0);
-//                    currentLoggingItem.setCellIdentityLte(cellInfoLte.getCellIdentity());
-//                    currentLoggingItem.setCellSignalStrengthLte(cellInfoLte.getCellSignalStrength());
-//                }
-//                List<CellInfoNr> cellInfoNrList = cellInfos.getCellInfoNr();
-//                if ( cellInfoNrList != null && cellInfoNrList.size()>0 ) {
-//                    if (cellInfoNrList.size() >1 ) {
-//                        Log.w(Constants.MODULE_NAME, "Find more than one cellInfoNr items, will take the first one");
-//                    }
-//                    // Just return the first one
-//                    CellInfoNr cellInfoNr = cellInfoNrList.get(0);
-//                    if (android.os.Build.VERSION.SDK_INT >= 29) {
-//                        currentLoggingItem.setCellIdentityNr((CellIdentityNr) cellInfoNr.getCellIdentity());
-//                        currentLoggingItem.setCellSignalStrengthNr((CellSignalStrengthNr) cellInfoNr.getCellSignalStrength());
-//                    }
-//                }
                 Log.d(Constants.MODULE_NAME, "Processed network info for log file");
             }
         }

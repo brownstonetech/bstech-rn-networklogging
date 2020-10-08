@@ -33,32 +33,6 @@ public class TelephonyHelper extends Observable
     private ReactApplicationContext mReactContext;
     private TelephonyManager telephonyManager;
     private TelephonyListener telephonyPhoneStateListener;
-//    private String PHONE_STATE_LISTENER = "Telephony-PhoneStateListener";
-
-//    private String LISTEN_CALL_FORWARDING_INDICATOR = "LISTEN_CALL_FORWARDING_INDICATOR";
-//    private String LISTEN_CALL_STATE = "LISTEN_CALL_STATE";
-//    private String LISTEN_CELL_INFO = "LISTEN_CELL_INFO";
-//    private String LISTEN_CELL_LOCATION = "LISTEN_CELL_LOCATION";
-//    private String LISTEN_DATA_ACTIVITY = "LISTEN_DATA_ACTIVITY";
-//    private String LISTEN_DATA_CONNECTION_STATE = "LISTEN_DATA_CONNECTION_STATE";
-//    private String LISTEN_MESSAGE_WAITING_INDICATOR = "LISTEN_MESSAGE_WAITING_INDICATOR";
-//    private String LISTEN_SERVICE_STATE = "LISTEN_SERVICE_STATE";
-//    private String LISTEN_SIGNAL_STRENGTHS = "LISTEN_SIGNAL_STRENGTHS";
-//
-//    private int DATA_ACTIVITY_NONE = 0;
-//    private int DATA_ACTIVITY_IN = 1;
-//    private int DATA_ACTIVITY_OUT = 2;
-//    private int DATA_ACTIVITY_INOUT = 3;
-//    private int DATA_ACTIVITY_DORMANT = 4;
-//
-//    private int DATA_DISCONNECTED = 0;
-//    private int DATA_CONNECTING = 1;
-//    private int DATA_CONNECTED = 2;
-//    private int DATA_SUSPENDED = 3;
-//
-//    private int CALL_STATE_IDLE = 0;
-//    private int CALL_STATE_RINGING = 1;
-//    private int CALL_STATE_OFFHOOK = 2;
 
     public TelephonyHelper(ReactApplicationContext reactContext) {
         mReactContext = reactContext;
@@ -180,29 +154,4 @@ public class TelephonyHelper extends Observable
         this.notifyObservers(cellInfos);
     }
 
-//    @Override
-//    public void phoneSignalStrengthsUpdated(SignalStrength signalStrength) {
-//        WritableMap map = Arguments.createMap();
-//        map.putInt("cdmaDbm", signalStrength.getCdmaDbm());
-//        map.putInt("cdmaEcio", signalStrength.getCdmaEcio());
-//        map.putInt("evdoDbm", signalStrength.getEvdoDbm());
-//        map.putInt("evdoEcio", signalStrength.getEvdoEcio());
-//        map.putInt("evdoSnr", signalStrength.getEvdoSnr());
-//        map.putInt("gsmBitErrorRate", signalStrength.getGsmBitErrorRate());
-//        map.putInt("gsmSignalStrength", signalStrength.getGsmSignalStrength());
-//        map.putBoolean("gsm", signalStrength.isGsm());
-//
-//        WritableMap result = Arguments.createMap();
-//        result.putString("type", "LISTEN_SIGNAL_STRENGTHS");
-//        result.putMap("data", map);
-//
-//    }
-
-//    private String decToHex(int dec) {
-//        return String.format("%x", dec);
-//    }
-//
-//    private int hexToDec(String hex) {
-//        return Integer.parseInt(hex, 16);
-//    }
 }

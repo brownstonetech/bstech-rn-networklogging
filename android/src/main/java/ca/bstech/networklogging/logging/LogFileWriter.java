@@ -1,18 +1,9 @@
 package ca.bstech.networklogging.logging;
 
-import android.os.Build;
-import android.telephony.CellIdentityLte;
-import android.telephony.CellIdentityNr;
-import android.telephony.CellInfo;
 import android.telephony.CellInfoLte;
 import android.telephony.CellInfoNr;
-import android.telephony.CellSignalStrengthLte;
-import android.telephony.CellSignalStrengthNr;
 import android.util.JsonWriter;
 import android.util.Log;
-
-import androidx.annotation.RequiresApi;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -85,7 +76,7 @@ public class LogFileWriter {
 
     private void outputTitle() throws IOException {
         writer.value("Current Time");
-        writer.value("IMSI");
+        writer.value("IMEI");
         writer.value("Longitude");
         writer.value("Latitude");
         writer.value("Access Network Type");
